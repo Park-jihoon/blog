@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>[Git]Unlink of file Failed. Should I try again? 문제 해결법 | Jihoon&#39;s IT Development | Web Developer&#39;s Hobby Development Notes</title>
+
+  
+  <meta name="author" content="Park-JiHoon">
+  
+
+  
+  <meta name="description" content="평소 개발이 취미인 개발자의 마구잡이 정리노트">
+  
+
+  
+  
+  <meta name="keywords" content="git">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="[Git]Unlink of file Failed. Should I try again? 문제 해결법"/>
+
+  <meta property="og:site_name" content="Jihoon&#39;s IT Development"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Jihoon&#39;s IT Development" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Jihoon&#39;s IT Development</a>
+    </h1>
+    <p class="site-description">Web Developer&#39;s Hobby Development Notes</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">Home</a></li>
+      
+        <li><a href="/archives">Archives</a></li>
+      
+        <li><a href="/categories">Categories</a></li>
+      
+        <li><a href="/tags">Tags</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>[Git]Unlink of file Failed. Should I try again? 문제 해결법</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2018/08/22/git-Unlink-of-file-Failed-Should-I-try-again-문제-해결법/" rel="bookmark">
+        <time class="entry-date published" datetime="2018-08-22T04:06:13.000Z">
+          2018-08-22
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h3 id="사건개요"><a href="#사건개요" class="headerlink" title="사건개요"></a>사건개요</h3><p>직장 후배가 <code>eclipse</code>의 <code>synchronize git</code>을 사용해 remote Server의 데이터를 <code>pull</code> 해오던 와중에 아무런 메시지 없이 데이터가 가져와지지 않는 현상이 발생했습니다.<br>평소 eclipse를 사용하지 않는 관계로 툴 내부에서 확인이 어려웠고 결국 git bash 를 열었습니다.</p>
+<h3 id="git-bash"><a href="#git-bash" class="headerlink" title="git bash"></a>git bash</h3><p>우선 당겨와 보았습니다.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git pull origin master</span></span><br></pre></td></tr></table></figure>
+
+<p>데이터를 잘 가져오던 중 아래의 메시지와 함께 멈춰버렸습니다.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> Unlink of file <span class="string">'파일명'</span> failed. Should I try again? (y/n)</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="해결방안"><a href="#해결방안" class="headerlink" title="해결방안"></a>해결방안</h3><p>해당 문제는 보통 <code>파일</code>을 다른 프로그램이 사용중일 경우에 발생하며, 파일을 잡고있는 다른 응용프로그램을 우선 종료해야합니다.</p>
+<blockquote><p>This could mean that another program is using the file, which is preventing git from “moving” the file into or out of the working directory when you are attempting to change branches.</p>
+<p>I have had this happen on Windows Vista where eclipse is the program “using” the file. The file may not be actually open in eclipse but may have been opened by a process run by eclipse.</p>
+<p>In this event, try closing the file in any applications that might have used it. If that doesn’t work, completely exit any applications which may have opened the file.</p>
+<footer><strong>stackoverflow</strong><cite><a href="https://stackoverflow.com/questions/4389833/unlink-of-file-failed-should-i-try-again" target="_blank" rel="noopener">unlink-of-file-failed-should-i-try-again</a></cite></footer></blockquote>
+
+<blockquote><p>이것은 <code>다른 프로그램</code>이 파일을 <code>사용</code>하고 있다는 것을 의미 할 수 있습니다. 이는 git이 브랜치를 변경하려고 할 때 작업 디렉토리 안팎으로 파일을 “이동”하지 못하게합니다.</p>
+<p>나는 Windows Vista에서 eclipse가 파일을 “사용”하는 프로그램을 사용하고있다. 파일은 이클립스에서 실제로 열리지 않을 수도 있지만 <code>이클립스에서 실행되는 프로세스</code>에 의해 열렸을 수 있습니다.</p>
+<p>이 경우 <code>파일을 사용한 적이있는 응용 프로그램에서 파일을 닫으십시오.</code> 그래도 작동하지 않으면 파일을 열었을 수있는 응용 프로그램을 모두 종료하십시오.</p>
+</blockquote>
+
+
+<h3 id="마무리"><a href="#마무리" class="headerlink" title="마무리"></a>마무리</h3><p>가장 의심스러웠던 후배 컴퓨터의 <code>eclipse</code>를 종료하였고. 다시 <code>git pull</code> 을 실행하자 <code>diff</code> 창이 정상적으로 떴으며, 문제가 해결되었습니다.<br>이번 문제는 <code>eclipse</code>의 <code>synchronize</code>가 중간에 꼬이면서 발생한 것으로 보입니다. eclipse를 재실행 한 뒤에는 해당 문제가 발생하지 않았습니다.</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Git/">Git</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/git/">git</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2019 Park-JiHoon
+    
+  </p>
+</footer>
+    
+  </div>
+</div>
+</body>
+</html>
