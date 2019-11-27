@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Maven Dependency Scope의 종류 | Jihoon&#39;s IT Development | Web Developer&#39;s Hobby Development Notes</title>
+
+  
+  <meta name="author" content="Park-JiHoon">
+  
+
+  
+  <meta name="description" content="평소 개발이 취미인 개발자의 마구잡이 정리노트">
+  
+
+  
+  
+  <meta name="keywords" content="maven,java">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Maven Dependency Scope의 종류"/>
+
+  <meta property="og:site_name" content="Jihoon&#39;s IT Development"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Jihoon&#39;s IT Development" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Jihoon&#39;s IT Development</a>
+    </h1>
+    <p class="site-description">Web Developer&#39;s Hobby Development Notes</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">Home</a></li>
+      
+        <li><a href="/archives">Archives</a></li>
+      
+        <li><a href="/categories">Categories</a></li>
+      
+        <li><a href="/tags">Tags</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>Maven Dependency Scope의 종류</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2019/11/28/Maven-Dependency-Scope의-종류/" rel="bookmark">
+        <time class="entry-date published" datetime="2019-11-27T15:33:48.000Z">
+          2019-11-28
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p><code>Dependency(의존성)</code> 범위는 의존성의 <code>transitive(전이)</code>를 제한하고 다양한 빌드 작업에 사용되는 <code>classpath</code>에 영향을주기 위해 사용됩니다.</p>
+<p>Maven에서 의존성을 선언하는 방법은 대략적으로 아래와 같습니다.</p>
+<p><code>pom.xml</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">project</span>&gt;</span></span><br><span class="line">  ...</span><br><span class="line">  <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>foo-bar<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">scope</span>&gt;</span>$&#123;scope&#125;<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>의존성에는 총 6가지의 scope가 존재합니다.</p>
+<ul>
+<li><code>compile</code><ul>
+<li>지정되지 않은 경우 사용되는 기본 <code>scope</code> 입니다. </li>
+<li><code>Compile</code>로 선언된 dependencies는 프로젝트의 모든 <code>classpath</code>에서 사용할 수 있습니다. 또한 이러한 의존성은 종속 프로젝트로 전파됩니다.</li>
+</ul>
+</li>
+<li><code>provided</code><ul>
+<li><code>Compile</code>과 비슷하지만 프로잭트 실행 시 라이브러리에 대한 의존성을 <em>JDK</em> 또는 <em>container(ex.tomcat)</em> 가 제공 할 것으로 예상함을 나타냅니다. </li>
+<li>예를 들자면, <em>Java Enterprise Edition</em> 용 <em>web Applicaton</em> 을 빌드할 경우 <em>web container</em> 가 <em>Servlet API</em> 및 관련 <em>Java EE API</em> 에 대한 class 및 의존성을 제공하므로 <code>provided</code>로 설정합니다. </li>
+<li>이 scope는 compile 및 test 시에만 사용되며 전이되지 않습니다.</li>
+</ul>
+</li>
+<li><code>runtime</code><ul>
+<li><code>compile</code>에는 필요하지 않지만 실행 시 필요할 경우 사용합니다. </li>
+<li><code>runtime</code>이 선언된 의존성은 <code>runtime</code> 과 <code>test</code> <em>classpath</em> 에 존재하지만 <code>compile</code> <em>classpath</em> 에는 존재하지 않습니다.</li>
+</ul>
+</li>
+<li><code>test</code><ul>
+<li><em>application</em> 을 정상적으로 사용하는데는 필요하지 않지만 <em>test 컴파일 또는 실행</em> 시 필요함을 의미합니다. </li>
+<li>이 <code>scope</code>는 전이되지 않습니다.</li>
+</ul>
+</li>
+<li><code>system</code><ul>
+<li>이 <code>scope</code>는 명시 적으로 포함하는 <em>JAR</em> 을 제공해야한다는 점을 제외하고, <code>provided</code>와 유사합니다. </li>
+<li><em>artifact</em> 는 항상 사용 가능하며 <em>repository</em> 에서는 검색되지 않습니다.</li>
+</ul>
+</li>
+<li><code>import</code><ul>
+<li><code>&lt;dependencyManagement&gt; 영역</code> 내부 <em>pom 타입의 의존성</em> 에만 지원됩니다.</li>
+<li>다른 프로젝트에서 관리되는 의존성 목록을 가져오기 위해서 사용합니다.</li>
+<li><code>import scope</code>로 선언된 <em>POM</em> 의 의존성 목록은 실제로 의존성의 전이에 참여하지 않습니다.</li>
+</ul>
+</li>
+</ul>
+<p>참고 : <a href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope" target="_blank" rel="noopener">http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope</a></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Java/">Java</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/maven/">maven</a><a href="/tags/java/">java</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2019 Park-JiHoon
+    
+  </p>
+</footer>
+    
+  </div>
+</div>
+</body>
+</html>
