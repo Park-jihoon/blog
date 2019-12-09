@@ -65,6 +65,142 @@
 
   
     
+    <h3 class="article-title"><a href="/2019/12/01/HTML-로-1px-미만-선-인쇄하기/"><span>HTML 로 1px 미만 선 인쇄하기</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2019/12/01/HTML-로-1px-미만-선-인쇄하기/" rel="bookmark">
+        <time class="entry-date published" datetime="2019-12-01T14:47:38.000Z">
+          2019-12-01
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h3 id="픽셀과-포인트"><a href="#픽셀과-포인트" class="headerlink" title="픽셀과 포인트"></a>픽셀과 포인트</h3><p>브라우저에서 선을 표현하는 단위는 대부분 px 입니다. 픽셀이죠. 이는 <code>상대적인 값</code>입니다. 디지털 이미지를 화면에 재현하기 위한 단위로, 이미지를 이루는 가장 작은 단위를 뜻합니다.</p>
+<p>픽셀을 많이 표현할 수 있다. = 해상도가 높다. 로 표현할 수 있으며, 이는 더 정교하게 이미지를 표현할 수 있다는 것을 의미합니다.</p>
+<p>즉, 픽셀은 모니터의 해상도, 크기 및 OS(windows, MAC OS) 등에 따라 바뀔 수 있는 상대적인 값임을 알 수 있습니다.</p>
+<p>하지만 인쇄의 영역에서 사용하는 단위인 pt는 다릅니다. 포인트라고 불리는 값은 <code>절대적인 값</code>입니다. 1인치를 72로 나눈 값으로 1pt = 1/72 inch = 약 0.3527 입니다.</p>
+<p>오늘은 px로 표현한 웹 문서를 가지고 인쇄물로 출력하면서 발생한 이슈에 대해 이야기해보겠습니다.</p>
+<h3 id="굵은-1px"><a href="#굵은-1px" class="headerlink" title="굵은 1px"></a>굵은 1px</h3><p>1px 굵기의 선으로 구성된 통계표를 출력해 받아본 고객에게서 다음과 같은 반응이 나왔습니다.</p>
+<blockquote>
+<p>프린트 해서 봤더니 선이 너무 굵어요. 좀 더 얇게 해주세요.</p>
+</blockquote>
+<p>당초 계획은 통계표를 웹에서 구성한 뒤 PDF파일로 제공하고, PDF파일을 고객이 프린터로 출력해서 제본하는 것이었습니다. 하지만 고객이 받아본 통계표 PDF는 고객 기준으로는 <strong>매우 굵은</strong> 선을 가지고 있었습니다.</p>
+<p>다시 말하지만 통계표(table)의 선 굵기(border)는 1px 이었습니다.</p>
+<p>간단한 html로 표현해보자.</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!doctype html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css"><span class="selector-tag">table</span><span class="selector-class">.one</span> &#123;</span></span><br><span class="line">	border: solid black 1px;</span><br><span class="line">	border-collapse: collapse;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-tag">td</span><span class="selector-class">.one</span> &#123;</span></span><br><span class="line">	border: solid black 1px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">class</span>=<span class="string">"one"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">td</span> <span class="attr">class</span>=<span class="string">"one"</span>&gt;</span>가나다라<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">td</span> <span class="attr">class</span>=<span class="string">"one"</span>&gt;</span>1234<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>검은색 1px 굵기의 선을 가진 테이블 입니다. 아래와 같이 표현됩니다.</p>
+<img src="/2019/12/01/HTML-%EB%A1%9C-1px-%EB%AF%B8%EB%A7%8C-%EC%84%A0-%EC%9D%B8%EC%87%84%ED%95%98%EA%B8%B0/table1.PNG" class="" title="간단한 테이블 1px">
+
+<p>얼핏 보기에는 얇아보이는 선입니다. 하지만 A4용지 혹은 B4용지로 출력해서 살펴본 고객은 한글(HWP)로 제작된 표에 비해 선이 굵어보인다고 했습니다. 실제로 양쪽 출력물을 비교해봐도 HTML 기반 출력물이 더 굵었습니다. 이때까지는 단순하게 생각했습니다.</p>
+<blockquote>
+<p>0.5px 정도 주면 해결되겠네.</p>
+</blockquote>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css"><span class="selector-tag">table</span><span class="selector-class">.one</span> &#123;</span></span><br><span class="line">	border: solid black 1px;</span><br><span class="line">	border-collapse: collapse;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-tag">td</span><span class="selector-class">.one</span> &#123;</span></span><br><span class="line">	border: solid black 1px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-tag">table</span><span class="selector-class">.two</span> &#123;</span></span><br><span class="line"><span class="css">	<span class="selector-tag">border</span>: <span class="selector-tag">solid</span> <span class="selector-tag">black</span> 0<span class="selector-class">.5px</span>;</span></span><br><span class="line">	border-collapse: collapse;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-tag">td</span><span class="selector-class">.two</span> &#123;</span></span><br><span class="line"><span class="css">	<span class="selector-tag">border</span>: <span class="selector-tag">solid</span> <span class="selector-tag">black</span> 0<span class="selector-class">.5px</span>;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">class</span>=<span class="string">"one"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">td</span> <span class="attr">class</span>=<span class="string">"one"</span>&gt;</span>가나다라<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">td</span> <span class="attr">class</span>=<span class="string">"one"</span>&gt;</span>1234<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">class</span>=<span class="string">"two"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">td</span> <span class="attr">class</span>=<span class="string">"two"</span>&gt;</span>가나다라<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">td</span> <span class="attr">class</span>=<span class="string">"two"</span>&gt;</span>1234<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>two 라는 클래스의 table을 하나 더 생성한 뒤 선의 굵기를 0.5px 로 줬습니다. 단순히 1px의 절반 굵기의 선이 생성되기를 기대했습니다. 하지만 어림도 없지. 1px 이하의 굵기는 화면에서 표현할 수 없는게 당연했습니다. (표현의 최소 단위니까…)</p>
+<img src="/2019/12/01/HTML-%EB%A1%9C-1px-%EB%AF%B8%EB%A7%8C-%EC%84%A0-%EC%9D%B8%EC%87%84%ED%95%98%EA%B8%B0/table2.PNG" class="" title="간단한 테이블 0.5px?">
+
+<p>물론 일반적인 해상도로 봤을 때는 동일해보이지만 확대를 하게되면 두 테이블은 확연히 다른 선 굵기를 가지고 있음을 알 수 있습니다.</p>
+<img src="/2019/12/01/HTML-%EB%A1%9C-1px-%EB%AF%B8%EB%A7%8C-%EC%84%A0-%EC%9D%B8%EC%87%84%ED%95%98%EA%B8%B0/%ED%99%95%EB%8C%80_table1.PNG" class="" title="확대 하니 다르다!">
+
+<p>화면은 확대가 가능하지만 <code>출력물</code>은 확대를 할 수 없습니다. 슬슬 출력물에 대한 부담감이 몰려왔습니다. 하지만 막연히 PDF 또는 프린트 드라이버가 알아서 해주실거야! 라는 생각도 드는 순간 입니다.</p>
+<p>아래는 위의 html을 PDF로 출력한 결과 입니다. (잘 안보일까봐 200% 확대 출력 했습니다.)</p>
+<a href="/2019/12/01/HTML-%EB%A1%9C-1px-%EB%AF%B8%EB%A7%8C-%EC%84%A0-%EC%9D%B8%EC%87%84%ED%95%98%EA%B8%B0/1px_tables.pdf" title="[PDF로 확인해보자!]">[PDF로 확인해보자!]</a>
+
+
+<p>하느님 맙소사. 출력된 pdf에는 0.5px 과 1px 이 모두 1px 로 표현되는 것을 확인할 수 있었습니다.</p>
+<p>이리저리 찾아본 결과 chrome 에서 print pdf로 pdf 를 생성할 경우 1px 미만의 선은 제대로 표현이 되지 않는다는 정보가 있었습니다. 이는 현재 기준으로도 수정될 가능성이 없어보이는 이슈로 <code>headless chrome</code>라이브러리인 <code>puppeteer</code>를 이용한 pdf export 시에도 마찬가지로 발생하고 있었습니다.</p>
+<h3 id="해결방안-테스트1-투명도"><a href="#해결방안-테스트1-투명도" class="headerlink" title="해결방안 테스트1 - 투명도"></a>해결방안 테스트1 - 투명도</h3><p>검색 결과 1px 미만의 선을 표현하기 위한 많은 개발자들의 노력과 답변들이 존재했습니다. 다만, 인쇄를 해야겠다라는 개발자는 많지 않았습니다.</p>
+<p>우선 화면에서 표현이 된다는 CSS 트릭 부터 테스트해봤습니다. 바로 투명도를 이용한 방식 입니다.</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!doctype html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css"><span class="selector-class">.container</span> &#123;</span></span><br><span class="line">    border-style: solid;</span><br><span class="line">    border-width: 1px;</span><br><span class="line">    margin-bottom: 10px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-class">.border-100</span> &#123;<span class="attribute">border-color</span>: <span class="built_in">rgba</span>(0,0,255,1);&#125;</span></span><br><span class="line"><span class="css"><span class="selector-class">.border-75</span> &#123;<span class="attribute">border-color</span>: <span class="built_in">rgba</span>(0,0,255,0.75);&#125;</span></span><br><span class="line"><span class="css"><span class="selector-class">.border-50</span> &#123;<span class="attribute">border-color</span>: <span class="built_in">rgba</span>(0,0,255,0.5);&#125;</span></span><br><span class="line"><span class="css"><span class="selector-class">.border-25</span> &#123;<span class="attribute">border-color</span>: <span class="built_in">rgba</span>(0,0,255,0.25);&#125;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"container border-100"</span>&gt;</span>1px<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"container border-75"</span>&gt;</span>0.75px<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"container border-50"</span>&gt;</span>0.5px<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"container border-25"</span>&gt;</span>0.25px<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>1px 미만의 선은 표현하기 어렵기 때문에 선의 투명도를 조절하여 얇게 보이도록 하는 트릭 입니다. 화면에서의 결과는 아래와 같습니다.</p>
+<img src="/2019/12/01/HTML-%EB%A1%9C-1px-%EB%AF%B8%EB%A7%8C-%EC%84%A0-%EC%9D%B8%EC%87%84%ED%95%98%EA%B8%B0/%ED%88%AC%EB%AA%85%EB%8F%84.PNG" class="" title="그럴싸하다">
+
+<p>모니터 너머로 보이는 선은 정말 얇아보입니다. 0.25px 정도는 억지스러워보이지만 0.5px 정도까지는 눈감고 넘어가줄만 합니다.</p>
+<p>이제 인쇄만 이쁘게 되면 됩니다.</p>
+<a href="/2019/12/01/HTML-%EB%A1%9C-1px-%EB%AF%B8%EB%A7%8C-%EC%84%A0-%EC%9D%B8%EC%87%84%ED%95%98%EA%B8%B0/%ED%88%AC%EB%AA%85%EB%8F%84.pdf" title="[PDF로 확인해보자!]">[PDF로 확인해보자!]</a>
+
+<p>PDF로 출력된 선은 뚜꺼워 보였으며, 얇아지지도 않았습니다. 투명해져가는 선은 단순히 프린터의 잉크가 떨어진 것 처럼 보일 뿐이었습니다.</p>
+<p>화면과 출력물은 다르다 라는 교훈만 얻게 되었습니다.</p>
+<h3 id="해결방안-테스트2-background-image-속성"><a href="#해결방안-테스트2-background-image-속성" class="headerlink" title="해결방안 테스트2 - background-image 속성"></a>해결방안 테스트2 - background-image 속성</h3><p>CSS에는 border-image 속성이 존재합니다. 이는 image 파일을 border 에 줄 수 있는 것으로, HTML BOX를 디자인하기 좋아지는 속성 입니다. </p>
+<p>구현은 간단하지 않은 관계로(현재 기억이 자세히 나지 않….) 히스토리만 적어보겠습니다.</p>
+<ul>
+<li>디자이너에게 0.5px 선 이미지를 요청해 받았습니다. (포토샵은 대단합니다.)</li>
+<li>border-image 속성으로 표현합니다.</li>
+<li>필요에 따라 회전 시키며 사용합니다.</li>
+</ul>
+<p>결과적으로는 PDF 상에 0.5px 를 표현하는데 성공했습니다. 이미지는 벡터로 랜더링 되는 선이 아니라 이미지 그 자체이기 때문에 문제가 없어 보였습니다.</p>
+<p>다만 문제가 있었습니다.</p>
+<p>구현 방식이 너무 복잡해, 수시로 편집 및 병합이 될 수 있는 통계표 테이블에 적용해주기는 어려웠던 것입니다. 때문에 절반의 성공으로 다음을 기약할 수 밖에 없었습니다.</p>
+<h3 id="해결방안-테스트-3"><a href="#해결방안-테스트-3" class="headerlink" title="해결방안 테스트 3"></a>해결방안 테스트 3</h3><p>마지막 방법은 <code>@media print</code>를 이용해 print시 적용되는 css를 별도로 제작하는 것 입니다.<br>이 방법에는 약간의 트릭이 있습니다. </p>
+<ul>
+<li>PDF print시 1px 미만이 표현되지 않는 문제 회피 필요.</li>
+<li><code>@media print</code> CSS에서 1px 미만의 숫자가 존재하지 않도록 기존의 CSS 수치에 일정 수치를 곱해준다.<ul>
+<li>예&gt; 0.5px 이 가장 얇은 선일 경우 = 모든 수치를 2배</li>
+<li>1px =&gt; 2px, 0.5px =&gt; 1px</li>
+</ul>
+</li>
+<li>마지막으로 body 부분에 0.5배 축소 설정을 추가</li>
+</ul>
+<p>아래는 예 입니다.</p>
+<p><code>@media screen</code></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">media</span> screen &#123;</span><br><span class="line">	<span class="selector-class">.container</span> &#123;</span><br><span class="line">		<span class="attribute">border-style</span>: solid;</span><br><span class="line">		<span class="attribute">border-width</span>: <span class="number">1px</span>;</span><br><span class="line">		<span class="attribute">margin-bottom</span>: <span class="number">10px</span>;</span><br><span class="line">		<span class="attribute">font-size</span>: <span class="number">14px</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="selector-class">.border-100</span> &#123;<span class="attribute">border-width</span>:<span class="number">1px</span>&#125;</span><br><span class="line">	<span class="selector-class">.border-75</span> &#123;<span class="attribute">border-width</span>:<span class="number">0.75px</span>&#125;</span><br><span class="line">	<span class="selector-class">.border-50</span> &#123;<span class="attribute">border-width</span>:<span class="number">0.5px</span>&#125;</span><br><span class="line">	<span class="selector-class">.border-25</span> &#123;<span class="attribute">border-width</span>:<span class="number">0.25px</span>&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><code>@media print</code></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">media</span> print &#123;</span><br><span class="line">	<span class="selector-tag">body</span> &#123;</span><br><span class="line">		<span class="attribute">transform</span>: <span class="built_in">scale</span>(.25);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="selector-class">.container</span> &#123;</span><br><span class="line">		<span class="attribute">border-style</span>: solid;</span><br><span class="line">		<span class="attribute">border-width</span>: <span class="number">4px</span>;</span><br><span class="line">		<span class="attribute">margin-bottom</span>: <span class="number">40px</span>;</span><br><span class="line">		<span class="attribute">font-size</span>: <span class="number">56px</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="selector-class">.border-100</span> &#123;<span class="attribute">border-width</span>:<span class="number">4px</span>&#125;</span><br><span class="line">	<span class="selector-class">.border-75</span> &#123;<span class="attribute">border-width</span>:<span class="number">3.05px</span>&#125;</span><br><span class="line">	<span class="selector-class">.border-50</span> &#123;<span class="attribute">border-width</span>:<span class="number">2.5px</span>&#125;</span><br><span class="line">	<span class="selector-class">.border-25</span> &#123;<span class="attribute">border-width</span>:<span class="number">1px</span>&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>문제없이 pdf 에서 원하는 굵기가 출력되는 것을 확인할 수 있었습니다.</p>
+<h3 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h3><p>프로젝트에서는 세가지 방법 중 가장 만족도가 높았던 3안을 선택하여 제작했습니다. WEB의 화면을 PDF로 출력한다는 일반적이지 않은 작업이었지만 원하는 결과에 가까운 출력물을 얻을 수 있어 다행이었습니다.</p>
+<p>모든 CSS의 굵기를 계산해서 만들어야 한다는 점이 어렵게 느껴질 수 있겠지만, SASS 등과 같이 CSS를 일괄 빌드할 수 있는 툴을 사용한다면 print CSS를 빠르게 생성할 수 있으니 충분히 쓸만해 보입니다.</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/html/">html</a><a href="/tags/css/">css</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2019/11/28/Maven-Dependency-Scope의-종류/"><span>Maven Dependency Scope의 종류</span></a></h3>
     
   
@@ -888,69 +1024,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/Python/">Python</a><a href="/tags/Selenium/">Selenium</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2018/08/09/Oracle-Row-to-Column-행을-열로-합치기/"><span>[Oracle] Row to Column, 행을 열로 합치기</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2018/08/09/Oracle-Row-to-Column-행을-열로-합치기/" rel="bookmark">
-        <time class="entry-date published" datetime="2018-08-09T01:30:46.000Z">
-          2018-08-09
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>여러 행을 특정 구분자(예:콤마[,])로 구분하며 합쳐야할 경우 사용되는 SQL 이다.</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> (<span class="keyword">SUBSTR</span> (SYS_CONNECT_BY_PATH (PART_NM , <span class="string">','</span>), <span class="number">2</span>)) csv</span><br><span class="line">	<span class="keyword">FROM</span> (</span><br><span class="line">		<span class="keyword">SELECT</span> X.PART_NM , ROW_NUMBER () <span class="keyword">OVER</span> (<span class="keyword">ORDER</span> <span class="keyword">BY</span> X.PART_NM ) rn,</span><br><span class="line">		<span class="keyword">COUNT</span> (*) <span class="keyword">OVER</span> () cnt, X.NFIX_REQ_NO</span><br><span class="line">		<span class="keyword">FROM</span> Table_One X</span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">WHERE</span> rn = cnt</span><br><span class="line"><span class="keyword">START</span> <span class="keyword">WITH</span> rn = <span class="number">1</span></span><br><span class="line"><span class="keyword">CONNECT</span> <span class="keyword">BY</span> rn = <span class="keyword">PRIOR</span> rn + <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>결과 : 콤마로 구분지어져 한줄로 출력된다.</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-      
-
-    <span class="post-categories">
-      <i class="icon-categories"></i>
-        <a href="/categories/Database/">Database</a>
-    </span>
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/Oracle/">Oracle</a>
     </span>
     
 

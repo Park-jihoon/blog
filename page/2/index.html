@@ -65,6 +65,69 @@
 
   
     
+    <h3 class="article-title"><a href="/2018/08/09/Oracle-Row-to-Column-행을-열로-합치기/"><span>[Oracle] Row to Column, 행을 열로 합치기</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2018/08/09/Oracle-Row-to-Column-행을-열로-합치기/" rel="bookmark">
+        <time class="entry-date published" datetime="2018-08-09T01:30:46.000Z">
+          2018-08-09
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>여러 행을 특정 구분자(예:콤마[,])로 구분하며 합쳐야할 경우 사용되는 SQL 이다.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> (<span class="keyword">SUBSTR</span> (SYS_CONNECT_BY_PATH (PART_NM , <span class="string">','</span>), <span class="number">2</span>)) csv</span><br><span class="line">	<span class="keyword">FROM</span> (</span><br><span class="line">		<span class="keyword">SELECT</span> X.PART_NM , ROW_NUMBER () <span class="keyword">OVER</span> (<span class="keyword">ORDER</span> <span class="keyword">BY</span> X.PART_NM ) rn,</span><br><span class="line">		<span class="keyword">COUNT</span> (*) <span class="keyword">OVER</span> () cnt, X.NFIX_REQ_NO</span><br><span class="line">		<span class="keyword">FROM</span> Table_One X</span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">WHERE</span> rn = cnt</span><br><span class="line"><span class="keyword">START</span> <span class="keyword">WITH</span> rn = <span class="number">1</span></span><br><span class="line"><span class="keyword">CONNECT</span> <span class="keyword">BY</span> rn = <span class="keyword">PRIOR</span> rn + <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>결과 : 콤마로 구분지어져 한줄로 출력된다.</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Database/">Database</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Oracle/">Oracle</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2018/08/08/Equal-Join의-대표적인-3가지/"><span>Equal Join의 대표적인 3가지</span></a></h3>
     
   
