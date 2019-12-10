@@ -65,6 +65,144 @@
 
   
     
+    <h3 class="article-title"><a href="/2019/12/10/Spring-Boot와-함께하는-Pivotal-Gemfire-간단예제(1)/"><span>Spring Boot와 함께하는 Pivotal Gemfire 간단예제(1)</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2019/12/10/Spring-Boot와-함께하는-Pivotal-Gemfire-간단예제(1)/" rel="bookmark">
+        <time class="entry-date published" datetime="2019-12-10T14:21:25.000Z">
+          2019-12-10
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="목차"><a href="#목차" class="headerlink" title="목차"></a>목차</h2><ol>
+<li><strong><code>Pivotal Gemfire 다운로드 및 설치, 기본 설정</code></strong></li>
+<li>Spring Boot를 이용한 Gemfire 이용</li>
+</ol>
+<p>갑작스럽지만 애플리케이션의 Cache를 담당해주던 Redis를 Pivotal Gemfire 로 변경하기로 했다. </p>
+<p>이런 결정에는 몇가지 이유가 존재했는데.</p>
+<ul>
+<li>현재 프로젝트에서 사용하는 클라우드 환경은 PCF(Pivotal Cloud Foundry)로 <code>Gemfire</code>를 기반으로 하는 PCC(Pivotal Cloud Cache)를 간편하게 서비스로 등록 및 사용할 수 있다.</li>
+<li>여건상 Redis 를 사용할 경우 PCF 환경의 외부에 Redis 서버가 존재할 수 밖에 없었다.</li>
+</ul>
+<p>이왕 Pivotal 제품인 PCF 를 쓰는거 끝까지 Pivotal 제품을 사용하기로 맘 먹은 부분도 크다. (기술 지원의 일원화?!)</p>
+<h2 id="1-1-Pivotal-Gemfire-란"><a href="#1-1-Pivotal-Gemfire-란" class="headerlink" title="1.1. Pivotal Gemfire 란"></a>1.1. Pivotal Gemfire 란</h2><p><code>Pivotal GemFire</code>는 글로벌 레벨로 데이터 동기화가 가능한 <strong>인 메모리 데이터 그리드(In-Memory Data Grid)</strong>다. <em>오픈소스 버전으로는 <a href="https://geode.apache.org/" target="_blank" rel="noopener"><code>Apache Geode</code></a>가 존재한다.</em></p>
+<p>주요기능을 요약하자면 다음과 같다.</p>
+<ul>
+<li>읽기-쓰기 처리량이 높음.(High Read-and-Write Throughput)</li>
+<li>대기 시간이 낮으면서 예측 가능.(Low and Predictable Latency)</li>
+<li>높은 확장성.(High Scalability)</li>
+<li>지속적인 가용성.(Continuous Availability)</li>
+<li>안정적인 이벤트 알림.(Reliable Event Notifications)</li>
+<li>데이터 저장소 상의 병렬화 된 애플리케이션 동작.(Parallelized Application Behavior on Data Stores)</li>
+<li>비공유 데이터 지속성.(Shared-Nothing Disk Persistence)</li>
+<li>소유 비용 절감(Reduced Cost of Ownership)</li>
+<li>클라이언트 / 서버를위한 단일 홉 기능(Single-Hop Capability for Client/Server)</li>
+<li>클라이언트 / 서버 보안(Client/Server Security)</li>
+<li>멀티 사이트 데이터 배포(Multisite Data Distribution)</li>
+<li>연속 쿼리(Continuous Querying)</li>
+<li>이기종 데이터 공유(Heterogeneous Data Sharing)</li>
+</ul>
+<blockquote>
+<p>참고 : <a href="https://gemfire.docs.pivotal.io/99/geode/getting_started/product_intro.html" target="_blank" rel="noopener">Gemfire Main Features</a></p>
+</blockquote>
+<p>단순 Cache로 쓰기에는 넘쳐 흐르는 기능이 아닐 수 없다.</p>
+<h2 id="1-2-Gemfire-다운로드"><a href="#1-2-Gemfire-다운로드" class="headerlink" title="1.2. Gemfire 다운로드"></a>1.2. Gemfire 다운로드</h2><p>Windows 운영체제 기반으로 설명한다.<br>나머지 운영체제의 설치는 <a href="https://gemfire.docs.pivotal.io/99/gemfire/getting_started/installation/install_intro.html" target="_blank" rel="noopener">여기서</a> 확인 가능하다.</p>
+<ul>
+<li>Pivotal 홈페이지에서 Gemfire 최신버전 다운로드<ul>
+<li>Gemfire 9.9.0  <a href="https://network.pivotal.io/products/pivotal-gemfire#/releases/503604" target="_blank" rel="noopener">다운로드</a></li>
+</ul>
+</li>
+</ul>
+<img src="/2019/12/10/Spring-Boot%EC%99%80-%ED%95%A8%EA%BB%98%ED%95%98%EB%8A%94-Pivotal-Gemfire-%EA%B0%84%EB%8B%A8%EC%98%88%EC%A0%9C(1)/gemfire1.PNG" class="">
+
+<ul>
+<li>원하는 폴더로 압축파일을 해제</li>
+</ul>
+<img src="/2019/12/10/Spring-Boot%EC%99%80-%ED%95%A8%EA%BB%98%ED%95%98%EB%8A%94-Pivotal-Gemfire-%EA%B0%84%EB%8B%A8%EC%98%88%EC%A0%9C(1)/gemfire2.PNG" class="">
+
+<ul>
+<li>bin 폴더를 path 에 추가.</li>
+</ul>
+<img src="/2019/12/10/Spring-Boot%EC%99%80-%ED%95%A8%EA%BB%98%ED%95%98%EB%8A%94-Pivotal-Gemfire-%EA%B0%84%EB%8B%A8%EC%98%88%EC%A0%9C(1)/gemfire3.PNG" class="">
+
+<h2 id="1-3-GFSH-실행-및-로컬-실행"><a href="#1-3-GFSH-실행-및-로컬-실행" class="headerlink" title="1.3. GFSH 실행 및 로컬 실행"></a>1.3. GFSH 실행 및 로컬 실행</h2><ul>
+<li>명령 프롬프트 창 열기</li>
+<li>gfsh(Gemfire Shell) 실행</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Microsoft Windows [Version 10.0.18362.476]</span><br><span class="line">(c) 2019 Microsoft Corporation. All rights reserved.</span><br><span class="line"></span><br><span class="line">C:\Users\park&gt;gfsh</span><br><span class="line">    _________________________     __</span><br><span class="line">   / _____/ ______/ ______/ /____/ /</span><br><span class="line">  / /  __/ /___  /_____  / _____  /</span><br><span class="line"> / /__/ / ____/  _____/ / /    / /</span><br><span class="line">/______/_/      /______/_/    /_/    9.9.0</span><br><span class="line"></span><br><span class="line">Monitor and Manage Pivotal GemFire</span><br><span class="line">gfsh&gt;</span><br></pre></td></tr></table></figure>
+
+<p>간단하다.</p>
+<p>실행을 위해서는 locator 와 server 를 기동해야 한다.</p>
+<ul>
+<li>locator 기동</li>
+</ul>
+<p><code>gfsh&gt;start locator --name=locator1</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gfsh&gt;start locator --name=locator1</span><br><span class="line">Starting a Geode Locator <span class="keyword">in</span> C:\Users\park\locator1...</span><br><span class="line">..</span><br><span class="line">Locator <span class="keyword">in</span> C:\Users\park\locator1 on park-PC[10334] as locator1 is currently online.</span><br><span class="line">Process ID: 19028</span><br><span class="line">Uptime: 1 minute 1 second</span><br><span class="line">Geode Version: 9.9.0</span><br><span class="line">Java Version: 1.8.0_77</span><br><span class="line">Log File: C:\Users\park\locator1\locator1.log</span><br><span class="line">JVM Arguments: -Dgemfire.enable-cluster-configuration=<span class="literal">true</span> -Dgemfire.load-cluster-configuration-from-dir=<span class="literal">false</span> -Dgemfire.launcher.registerSignalHandlers=<span class="literal">true</span> -Djava.awt.headless=<span class="literal">true</span> -Dsun.rmi.dgc.server.gcInterval=9223372036854775806</span><br><span class="line">Class-Path: D:\workspace\pivotal-gemfire-9.9.0\lib\geode-core-9.9.0.jar;D:\workspace\pivotal-gemfire-9.9.0\lib\geode-dependencies.jar</span><br><span class="line"></span><br><span class="line">Successfully connected to: JMX Manager [host=park-PC, port=1099]</span><br><span class="line"></span><br><span class="line">Cluster configuration service is up and running.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>server 기동</li>
+</ul>
+<p><code>gfsh&gt;start server --name=server1</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">gfsh&gt;start server --name=server1</span><br><span class="line">Starting a Geode Server <span class="keyword">in</span> C:\Users\park\server1...</span><br><span class="line">..</span><br><span class="line">Server <span class="keyword">in</span> C:\Users\park\server1 on park-PC[40404] as server1 is currently online.</span><br><span class="line">Process ID: 10964</span><br><span class="line">Uptime: 1 minute 1 second</span><br><span class="line">Geode Version: 9.9.0</span><br><span class="line">Java Version: 1.8.0_77</span><br><span class="line">Log File: C:\Users\park\server1\server1.log</span><br><span class="line">JVM Arguments: -Dgemfire.default.locators=192.168.0.6[10334] -Dgemfire.start-dev-rest-api=<span class="literal">false</span> -Dgemfire.use-cluster-configuration=<span class="literal">true</span> -XX:OnOutOfMemoryError=taskkill /F /PID %p -Dgemfire.launcher.registerSignalHandlers=<span class="literal">true</span> -Djava.awt.headless=<span class="literal">true</span> -Dsun.rmi.dgc.server.gcInterval=9223372036854775806</span><br><span class="line">Class-Path: D:\workspace\pivotal-gemfire-9.9.0\lib\geode-core-9.9.0.jar;D:\workspace\pivotal-gemfire-9.9.0\lib\geode-dependencies.jar</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>locator와 server 기동 확인</li>
+</ul>
+<p><code>gfsh&gt;list members</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gfsh&gt;list members</span><br><span class="line">Member Count : 2</span><br><span class="line"></span><br><span class="line">  Name   | Id</span><br><span class="line">-------- | ---------------------------------------------------------------</span><br><span class="line">locator1 | 192.168.0.6(locator1:19028:locator)&lt;ec&gt;&lt;v0&gt;:41000 [Coordinator]</span><br><span class="line">server1  | 192.168.0.6(server1:10964)&lt;v1&gt;:41001</span><br></pre></td></tr></table></figure>
+
+<p>여기까지가 Gemfire 기동 준비다.</p>
+<p>다음에는 Gemifre 의 Table 이라고 할 수 있는 <code>region</code> 생성과 간단히 Spring Boot 를 이용한 Spring Data Gemfire Cache 샘플 프로젝트를 만들어 보겠다.</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Java/">Java</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Java-Spring-Spring-Boot-Gemfire/">Java, Spring, Spring Boot, Gemfire</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2019/12/09/HTML-로-1px-미만-선-인쇄하기/"><span>HTML 로 1px 미만 선 인쇄하기</span></a></h3>
     
   
@@ -178,6 +316,13 @@
   <div class="article-footer">
     <div class="article-meta pull-left">
 
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Etc/">Etc</a>
+    </span>
     
 
     
@@ -902,128 +1047,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/Burp/">Burp</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2018/08/09/Selenium을-이용한-Web-Crawler-만들기/"><span>Selenium을 이용한 Web Crawler 만들기</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2018/08/09/Selenium을-이용한-Web-Crawler-만들기/" rel="bookmark">
-        <time class="entry-date published" datetime="2018-08-09T02:15:50.000Z">
-          2018-08-09
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h1 id="Selenium-이란"><a href="#Selenium-이란" class="headerlink" title="Selenium 이란?"></a>Selenium 이란?</h1><blockquote><p>Selenium automates browsers.</p>
-<footer><strong>SeleniumHQ</strong><cite><a href="https://www.seleniumhq.org/" target="_blank" rel="noopener">What is Selenium?</a></cite></footer></blockquote>
-
-<p>Selenium은 <code>webdriver</code>를 통해 웹 브라우저(ie, chrome, firefox 등)를 자동화 하여 웹 에플리케이션을 테스트 할 수 있는 오픈소스 프레임워크입니다.<br>다양한 언어 (c#, java, python) 를 지원하며, 상황에 맞게 골라 사용할 수 있죠.</p>
-<p>Selenium에는 <code>Selenium WebDriver</code> 와 <code>Selenium IDE</code> 가 있습니다.</p>
-<h2 id="Selenium-WebDriver"><a href="#Selenium-WebDriver" class="headerlink" title="Selenium WebDriver"></a>Selenium WebDriver</h2><p><a href="https://www.seleniumhq.org/projects/webdriver/" target="_blank" rel="noopener">Selenium WebDriver</a>는 지금은 사용되지 않는 Selenium Remote Control의 후속제품으로 다음과 같은 기능이 필요할 경우 사용이 추천됩니다.</p>
-<ul>
-<li><code>브라우저 기반</code>의 강력한 반복 자동화 테스트 생성</li>
-<li>여러 환경에서 Script를 확장 및 배포</li>
-</ul>
-<h2 id="Selenium-IDE"><a href="#Selenium-IDE" class="headerlink" title="Selenium IDE"></a>Selenium IDE</h2><p><a href="https://www.seleniumhq.org/projects/ide/" target="_blank" rel="noopener">Selenium IDE</a>는 Firefox 의 확장프로그램(add-on)으로 간단히 <code>recode</code> 및 <code>playback</code>을 사용할 수 있습니다.<br>다음과 같은 기능이 있을 경우 사용이 추천됩니다.</p>
-<ul>
-<li>빠른 버그 복제 스크립트 작성</li>
-<li>자동화 된 예비 검사를 돕기위한 스크립트 작성</li>
-</ul>
-<p>이번에 제작하려는 프로그램은 Web Crawler이기 때문에 IDE 는 다음기회에 살펴보기로 하고 Selenium WebDriver를 살펴보기로 합니다.</p>
-<hr>
-<h1 id="Selenium-python"><a href="#Selenium-python" class="headerlink" title="Selenium + python"></a>Selenium + python</h1><p>Selenium은 많은 언어를 지원하지만 python 을 기반으로 살펴보겠습니다.<br>간단한 프로젝트를 만들때 python 을 사용하는 이유는 다음과 같습니다.</p>
-<ul>
-<li>비교적 짧은 코드로 얻을 수 있는 만족스러운 결과물</li>
-<li>복잡하지 않은 작은 규모의 Application 을 제작하기에 적합</li>
-<li>파워풀한 Beautifulsoup</li>
-<li>jar 로 배포 시 사용하기 힘들어 하는 사용자가 존재 =&gt; 배포시 간단히 exe 로 변환 가능</li>
-</ul>
-<h2 id="python-requests-Crawler와의-차이점"><a href="#python-requests-Crawler와의-차이점" class="headerlink" title="python requests Crawler와의 차이점"></a>python requests Crawler와의 차이점</h2><p>사실 이전부터 사용해오던 간단한 Web Crawler가 존재했습니다.<br>python 기반으로 가장 쉽게 제작할 수 있는 Beautifulsoup과 requests를 이용한 Crawler였죠.</p>
-<p>기능은 간단했습니다.</p>
-<ul>
-<li>목표 사이트에 로그인</li>
-<li>원하는 커뮤니티로 이동</li>
-<li>게시물목록을 읽어들여 게시물 내부의 이미지를 모두 다운로드</li>
-</ul>
-<p>해당 프로그램은 약 1년 이상 안정적으로, 또한 성공적으로 그 역할을 완수했습니다.</p>
-<p>하지만 최근 해당 사이트의 업데이트로 <code>로그인 보안 강화</code>라는 어쩔 수 없는 이유가 발생하게 됩니다.<br><code>requests</code>의 로그인 방식은 id와 password를 해당 사이트에 parameter 로 날려서 로그인 세션을 생성해오게 됩니다.<br>로그인 세션을 발생시키는 url을 확인 후 해당 페이지가 원하는 <code>parameter</code>를 보내주는 방식인거죠.</p>
-<p>하지만 이번 업데이트에서는 복잡한 <code>javascript 라이브러리</code>로 사용자의 <code>password</code>와 server 에서 보낸 <code>1회성 key</code>를 조합하여 암호화한 parameter를 넘겨야만 Session이 생성되도록 변경되었습니다.</p>
-<p>requests 기반 Crawler의 한계를 느끼는 순간이었습니다.</p>
-<h2 id="javascript-function-이용의-필요성"><a href="#javascript-function-이용의-필요성" class="headerlink" title="javascript function 이용의 필요성"></a>javascript function 이용의 필요성</h2><p>사이트 로그인방식은 사실 간단합니다. id 와 pw 를 입력하는 란에 알맞게 넣은 뒤 로그인 버튼을 클릭해주면 되죠. 그 뒤의 복잡한 javascript 구동방식이라던가, 암호화 과정은 고려할 필요가 없습니다.<br><code>Selenium</code> 역시 사용자가 입력하는 것 처럼 적절히 입력하고 클릭이벤트를 발생시켜 줍니다.<br>requests는 문자 형식으로 넘어온 html을 분석하기 때문에 javascript function을 실행시킬 수 없었다면, <code>Selenium</code>은 브라우저 자체를 이용하기 때문에 javascript function 까지도 충분히 이용이 가능합니다.</p>
-<p>어라… 뭔가 더 좋은게 아닌가?</p>
-<p>다만 속도적인 측면에서는 무조건 requests가 빨랐습니다. 아무래도 브라우저가 해당 페이지를 읽어들이는데 필요한 시간이 존재하기 때문이겠지요.</p>
-<hr>
-<h2 id="Selenium-설치"><a href="#Selenium-설치" class="headerlink" title="Selenium 설치"></a>Selenium 설치</h2><p>본 포스트는 python 3.5가 이미 설치되어 있는 환경이라고 가정하에 작성됩니다. 많은 호환성이 걱정되신다면 <a href="https://www.anaconda.com/" target="_blank" rel="noopener">Anaconda</a> 환경에서 python 3.5 를 추가하여 사용하시기를 추천드립니다.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install selenium</span><br></pre></td></tr></table></figure>
-
-<p>설치는 간단히 완료되었습니다. 또한 실제 브라우저가 필요하므로 <a href="https://www.google.com/intl/ko_ALL/chrome/" target="_blank" rel="noopener">chrome</a>이 설치되지 않았다면 빠르게 설치를 진행해줍니다.</p>
-<p>다음은 Chrome 기반으로 작성된 Webdriver 인 ChromeDriver 를 다운로드 받아줍시다.</p>
-<p>URL : <a href="https://sites.google.com/a/chromium.org/chromedriver/downloads" target="_blank" rel="noopener">https://sites.google.com/a/chromium.org/chromedriver/downloads</a></p>
-<p>준비 완료!</p>
-<h3 id="라이브라리-import"><a href="#라이브라리-import" class="headerlink" title="라이브라리 import"></a>라이브라리 import</h3><p>우선 필요한 라이브러리들을 import 해줍니다.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os  </span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver  </span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.chrome.options <span class="keyword">import</span> Options  </span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys</span><br></pre></td></tr></table></figure>
-
-<p><code>selenium.webdriver.common.keys</code>는 실제로 사용자가 입력하는 key 이벤트를 발생시키기 위한 라이브러리 입니다.<br>ID와 PW를 입력해 줘야 하니 import 합니다.</p>
-<p>다음은 Chrome 구동시 옵션입니다. <code>--headless</code> 를 부여하면 chrome 이 백그라운드에서 동작하며 좀더 속도가 향상됩니다. (headless 모드는 chrome 버전 63 부터 사용 가능합니다.)<br>ChromeDriver를 제작중인 py 파일과 동일한 폴더로 이동시킨 뒤에 해당 Path 를 잡아줍니다.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">chrome_options = Options()  </span><br><span class="line">chrome_options.add_argument(<span class="string">"--headless"</span>)  </span><br><span class="line">chrome_options.binary_location = <span class="string">'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'</span>  </span><br><span class="line">driver = webdriver.Chrome(executable_path=os.path.abspath(<span class="string">"chromedriver"</span>),   chrome_options=chrome_options)</span><br></pre></td></tr></table></figure>
-
-<p>Chrome을 구동합니다.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">driver.get(<span class="string">"https://logins.daum.net/accounts/loginform.do"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>해당 페이지가 로드된 뒤 로그인 정보를 입력하고 로그인 버튼을 클릭 합니다.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">my_id = driver.find_element_by_id(<span class="string">"id"</span>)       <span class="comment">#아이디를 입력할 input 위치</span></span><br><span class="line">my_pw = driver.find_element_by_id(<span class="string">"inputPwd"</span>) <span class="comment">#비밀번호를 입력할 input 위치</span></span><br><span class="line">login_button = driver.find_element_by_id(<span class="string">"loginBtn"</span>) <span class="comment">#로그인버튼</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> login_button.is_displayed():</span><br><span class="line">    my_id.clear()</span><br><span class="line">    my_id.send_keys(<span class="string">"아이디"</span>)</span><br><span class="line">    my_pw.clear()</span><br><span class="line">    my_pw.send_keys(<span class="string">"패스워드"</span>)</span><br><span class="line">    login_button.click()</span><br><span class="line"></span><br><span class="line">driver.quit()</span><br></pre></td></tr></table></figure>
-
-<p><code>my_id.clear()</code>로 혹시나 있을지 모르는 초기값을 제거해준 뒤 <code>my_id.send_keys(&quot;아이디&quot;)</code> 해당 구문을 지정된 input 에 입력해줍니다.</p>
-<p>입력이 완료되었다면 <code>login_button.click()</code>으로 로그인을 진행합니다.</p>
-<p><code>driver.quit()</code>는 Chrome을 종료시키는 구문입니다. 프로그램이 완료된 뒤 Chrome 이 종료되기를 원한다면 잊어버리면 안됩니다. (특히 <code>headless</code>의 경우 눈에보이지 않기 때문에 자칫하다가 어마어마하게 실행되어버리는 경우가 발생합니다.)</p>
-<h1 id="마무리하며"><a href="#마무리하며" class="headerlink" title="마무리하며"></a>마무리하며</h1><p>Selenium은 requests보다 러닝커브가 높은편입니다. 또한 다른 사용자를 위해 제작한 프로그램을 exe로 배포하더라도 chrome 과 chromedriver 를 별도로 다운로드 받아야 하는 등의 불편점도 존재합니다.<br>하지만 훨씬 강력하며, 매력적인 프레임워크임에는 틀림없어 보입니다.</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-      
-
-    <span class="post-categories">
-      <i class="icon-categories"></i>
-        <a href="/categories/Python/">Python</a>, <a href="/categories/Python/Selenium/">Selenium</a>
-    </span>
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/Python/">Python</a><a href="/tags/Selenium/">Selenium</a>
     </span>
     
 
