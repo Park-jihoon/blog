@@ -1,0 +1,288 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Spring Boot와 함께하는 Pivotal Gemfire 간단예제(2) | Jihoon&#39;s IT Development | Web Developer&#39;s Hobby Development Notes</title>
+
+  
+  <meta name="author" content="Park-JiHoon">
+  
+
+  
+  <meta name="description" content="평소 개발이 취미인 개발자의 마구잡이 정리노트">
+  
+
+  
+  
+  <meta name="keywords" content="Java, Spring, Spring Boot, Gemfire">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Spring Boot와 함께하는 Pivotal Gemfire 간단예제(2)"/>
+
+  <meta property="og:site_name" content="Jihoon&#39;s IT Development"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Jihoon&#39;s IT Development" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Jihoon&#39;s IT Development</a>
+    </h1>
+    <p class="site-description">Web Developer&#39;s Hobby Development Notes</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">Home</a></li>
+      
+        <li><a href="/archives">Archives</a></li>
+      
+        <li><a href="/categories">Categories</a></li>
+      
+        <li><a href="/tags">Tags</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>Spring Boot와 함께하는 Pivotal Gemfire 간단예제(2)</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2019/12/16/Spring-Boot와-함께하는-Pivotal-Gemfire-간단예제-2/" rel="bookmark">
+        <time class="entry-date published" datetime="2019-12-15T15:22:01.000Z">
+          2019-12-16
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="목차"><a href="#목차" class="headerlink" title="목차"></a>목차</h2><ol>
+<li>Pivotal Gemfire 다운로드 및 설치, 기본 설정</li>
+<li><strong><code>Spring Boot를 이용한 Gemfire 이용</code></strong></li>
+</ol>
+<p>지난시간에 이어서 간단한 테스트용 Region 생성과 Data 를 Region 안에 넣고 빼는 샘플 프로젝트를 제작해보자.</p>
+<p>완성된 소스는 여기서 확인 가능하다.</p>
+<p><a href="https://github.com/Park-jihoon/gemfire-demo" target="_blank" rel="noopener">https://github.com/Park-jihoon/gemfire-demo</a></p>
+<h2 id="Region-생성"><a href="#Region-생성" class="headerlink" title="Region 생성"></a>Region 생성</h2><p>우선 gfsh 를 이용해 region 을 생성하자. region은 일반적인 DataBase로 치면 Table과 비슷한 역할을 하는 것으로 생성 시 많은 옵션을 줄 수 있다.</p>
+<p>생성시 옵션은 대략 아래와 같다.</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">create region --name=value [--<span class="built_in">type</span>=value] [--template-region=value]</span><br><span class="line">    [--groups=value(,value)*] [--<span class="keyword">if</span>-not-exists(=value)?]</span><br><span class="line">    [--key-constraint=value] [--value-constraint=value]</span><br><span class="line">    [--<span class="built_in">enable</span>-statistics=value] [--entry-idle-time-expiration=value]</span><br><span class="line">    [--entry-idle-time-expiration-action=value]</span><br><span class="line">    [--entry-time-to-live-expiration=value]</span><br><span class="line">    [--entry-time-to-live-expiration-action=value]</span><br><span class="line">    [--entry-idle-time-custom-expiry=value] [--entry-time-to-live-custom-expiry=value]</span><br><span class="line">    [--region-idle-time-expiration=value]</span><br><span class="line">    [--region-idle-time-expiration-action=value]</span><br><span class="line">    [--region-time-to-live-expiration=value]</span><br><span class="line">    [--region-time-to-live-expiration-action=value] [--disk-store=value]</span><br><span class="line">    [--<span class="built_in">enable</span>-synchronous-disk=value] [--<span class="built_in">enable</span>-async-conflation=value]</span><br><span class="line">    [--<span class="built_in">enable</span>-subscription-conflation=value] [--cache-listener=value(,value)*]</span><br><span class="line">    [--cache-loader=value] [--cache-writer=value]</span><br><span class="line">    [--async-event-queue-id=value(,value)*]</span><br><span class="line">    [--gateway-sender-id=value(,value)*] [--<span class="built_in">enable</span>-concurrency-checks=value]</span><br><span class="line">    [--<span class="built_in">enable</span>-cloning=value] [--concurrency-level=value]</span><br><span class="line">    [--colocated-with=value] [--<span class="built_in">local</span>-max-memory=value]</span><br><span class="line">    [--recovery-delay=value] [--redundant-copies=value]</span><br><span class="line">    [--startup-recovery-delay=value] [--total-max-memory=value]</span><br><span class="line">    [--total-num-buckets=value] [--compressor=value] [--off-heap(=value)]</span><br><span class="line">    [--partition-resolver=value] [--eviction-entry-count=value]</span><br><span class="line">    [--eviction-max-memory=value] [--eviction-action=value] [--eviction-object-sizer=value]</span><br></pre></td></tr></table></figure>
+
+<p>우선 region 생성 시 필수값인 <code>name</code>과 <code>type</code>만 살펴보자.</p>
+<ul>
+<li>name<ul>
+<li>region을 해당 값의 이름으로 생성한다.</li>
+<li>DB의 tableName과 유사</li>
+</ul>
+</li>
+<li>type<ul>
+<li><code>PARTITION</code>, <code>PARTITION_REDUNDANT</code>, <code>REPLICATE</code>, <code>LOCAL</code>, etc.</li>
+<li>region type 에 따라 많은 타입이 존재하며 원하는 형태의 저장타입을 지정하면 된다.</li>
+</ul>
+</li>
+</ul>
+<p>이번 샘플에서는 아래의 두가지 region만 생성해본다.</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">gfsh&gt;create region --name=testCache --<span class="built_in">type</span>=REPLICATE</span><br><span class="line">Member  | Status | Message</span><br><span class="line">------- | ------ | ----------------------------------------</span><br><span class="line">server1 | OK     | Region <span class="string">"/testCache"</span> created on <span class="string">"server1"</span></span><br><span class="line"></span><br><span class="line">Cluster configuration <span class="keyword">for</span> group <span class="string">'cluster'</span> is updated.</span><br><span class="line">gfsh&gt;create region --name=customer --<span class="built_in">type</span>=REPLICATE</span><br><span class="line">Member  | Status | Message</span><br><span class="line">------- | ------ | ---------------------------------------</span><br><span class="line">server1 | OK     | Region <span class="string">"/customer"</span> created on <span class="string">"server1"</span></span><br><span class="line"></span><br><span class="line">Cluster configuration <span class="keyword">for</span> group <span class="string">'cluster'</span> is updated.</span><br></pre></td></tr></table></figure>
+
+<h2 id="Spring-Boot-Sample-생성"><a href="#Spring-Boot-Sample-생성" class="headerlink" title="Spring Boot Sample 생성"></a>Spring Boot Sample 생성</h2><ul>
+<li>환경<ul>
+<li>java 1.8 이상</li>
+<li>Maven</li>
+<li>Spring boot 2.1.1.RELEASE</li>
+<li>Spring geode starter 1.2.1.RELEASE</li>
+<li>SpringFox Swagger 2.9.2</li>
+</ul>
+</li>
+</ul>
+<h3 id="Directory-구조"><a href="#Directory-구조" class="headerlink" title="Directory 구조"></a>Directory 구조</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Gemfire-demo</span><br><span class="line">|-- pom.xml</span><br><span class="line">`-- src</span><br><span class="line">    `-- main</span><br><span class="line">        `-- java</span><br><span class="line">            `-- ko.co.pohinian.gemfiredemo</span><br><span class="line">                |-- GemfireDemoApplication.java</span><br><span class="line">                |-- configuration</span><br><span class="line">                |   |-- GemfireConfiguration.java</span><br><span class="line">                |   `-- SwaggerConfiguration.java</span><br><span class="line">                |-- controller</span><br><span class="line">                |   |-- CustomerController.java</span><br><span class="line">                |   `-- TestCacheController.java</span><br><span class="line">                |-- entity</span><br><span class="line">                |   |-- Customer.java</span><br><span class="line">                |   `-- TestCache.java</span><br><span class="line">                |-- repository</span><br><span class="line">                |   `-- CustomerRepository.java</span><br><span class="line">                `-- service</span><br><span class="line">                    `-- TestCacheService.java</span><br></pre></td></tr></table></figure>
+
+<h3 id="파일-설명"><a href="#파일-설명" class="headerlink" title="파일 설명"></a>파일 설명</h3><p><code>pom.xml</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.1.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- gemfire --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.geode<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-geode-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.1.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- swagger2 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.springfox<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springfox-swagger2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.9.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.springfox<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springfox-swagger-ui<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.9.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- swagger2 --&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- lombok --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- test --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.junit.vintage<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit-vintage-engine<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- test --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>geode</code>와 <code>swagger2</code> 관련 라이브러리는 버전을 명시해야 한다.</p>
+</blockquote>
+<p><code>GemfireDemoApplication.java</code><br>실행을 위한 클래스를 생성한다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GemfireDemoApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(GemfireDemoApplication<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p><code>GemfireConfiguration.java</code></p>
+<p><code>gemfire</code>를 사용하기 위한 설정을 모아두는 클래스 입니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableGemfireCaching</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GemfireConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ClientCache <span class="title">gemfireCache</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ClientCacheFactory cacheFactory = <span class="keyword">new</span> ClientCacheFactory();</span><br><span class="line">        cacheFactory.addPoolLocator(<span class="string">"192.168.0.6"</span>, <span class="number">10334</span>);</span><br><span class="line">        <span class="keyword">return</span> cacheFactory.create();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span>(<span class="string">"testCache"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ClientRegionFactoryBean&lt;String, TestCache&gt; <span class="title">testCache</span><span class="params">(@Autowired ClientCache clientCache)</span> </span>&#123;</span><br><span class="line">        ClientRegionFactoryBean&lt;String, TestCache&gt; regionFactoryBean = <span class="keyword">new</span> ClientRegionFactoryBean&lt;&gt;();</span><br><span class="line">        regionFactoryBean.setCache(clientCache);</span><br><span class="line">        regionFactoryBean.setClose(<span class="keyword">false</span>);</span><br><span class="line">        regionFactoryBean.setShortcut(ClientRegionShortcut.PROXY);</span><br><span class="line">        <span class="keyword">return</span> regionFactoryBean;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Bean</span>(<span class="string">"customer"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ClientRegionFactoryBean&lt;Long, Customer&gt; <span class="title">customer</span><span class="params">(@Autowired ClientCache clientCache)</span> </span>&#123;</span><br><span class="line">        ClientRegionFactoryBean&lt;Long, Customer&gt; regionFactoryBean = <span class="keyword">new</span> ClientRegionFactoryBean&lt;&gt;();</span><br><span class="line">        regionFactoryBean.setCache(clientCache);</span><br><span class="line">        regionFactoryBean.setClose(<span class="keyword">false</span>);</span><br><span class="line">        regionFactoryBean.setShortcut(ClientRegionShortcut.PROXY);</span><br><span class="line">        <span class="keyword">return</span> regionFactoryBean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><code>@EnableGemfireCaching</code> 으로 gemfire cache를 사용할 것임을 명시한다.</li>
+<li><code>gemfireCache()</code>에서 연결하기위한 Gemfire 서버의 정보를 설정한다.<ul>
+<li><code>192.168.0.6</code>은 이전 글에서 시작한 locator 정보의 ip이다.</li>
+<li>기본 local 접속이기때문에 별도의 username 과 password 는 설정하지 않는다. 하지만 별도의 서버를 구성할 경우에는 서버의 gemfire username과 password를 추가해야 한다.</li>
+</ul>
+</li>
+<li><code>customer</code>와 <code>testCache</code>는 동명의 <code>region</code>에 대한 정보를 입력한다.</li>
+<li><code>ClientRegionShortcut.PROXY</code>는 애플리케이션에서 저장되는 정보를 어떠한 방식으로 처리할지를 지정하는 것으로 기본값음 <code>LOCAL</code>이다. <code>LOCAL</code>인 경우 값을 애플리케이션에서만 가지고 있게 되며 서버로 전송하지 않는다.<ul>
+<li>별도의 서버를 두고 데이터를 공유할 경우에는 <code>PROXY</code>로 지정해줘야 한다.</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h3 id="Customer-저장-및-로드"><a href="#Customer-저장-및-로드" class="headerlink" title="Customer 저장 및 로드"></a>Customer 저장 및 로드</h3><p>Customer 는 <code>org.springframework.data.repository.CrudRepository</code>를 사용하여 데이터를 저장 및 삭제하는 예제다.</p>
+<p><code>Customer.java</code><br>region 정보를 명시해주는 클래스다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@ToString</span></span><br><span class="line"><span class="meta">@Region</span>(<span class="string">"customer"</span>)</span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span>(staticName = <span class="string">"newCustomer"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>Serializable</code>은 java 끼리만 gemfire의 데이터를 공유할 경우에 사용하면 간편하다.<br>다만 다른 언어들과 데이터를 공유할 경우에는 <code>DataSerializable</code> 등을 구현하여줘야 한다.</p>
+</blockquote>
+<p><code>CustomerRepository.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CustomerRepository</span> <span class="keyword">extends</span> <span class="title">CrudRepository</span>&lt;<span class="title">Customer</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Customer의 ID 타입인 Long 을 명시해준다.<br>gemfire 이외의 기술을 선택할 경우를 대비해 유연하도록 <code>CrudRepository</code>를 구현해준다.<br>findByName 등 jpa 에서 사용하던 형태의 메서드를 선언해 사용 가능하다.</p>
+</blockquote>
+<p><code>CustomerController.java</code></p>
+<p>Customer 의 정보를 저장하기 위한 Rest Controller 이다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"customer"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomerController</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> CustomerRepository customerRepository;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomerController</span><span class="params">(CustomerRepository customerRepository)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.customerRepository = customerRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"&#123;key&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Customer <span class="title">put</span><span class="params">(@PathVariable(<span class="string">"key"</span>)</span> Long key, @RequestBody String name) </span>&#123;</span><br><span class="line">        Customer customer = Customer.newCustomer(key, name);</span><br><span class="line">        <span class="keyword">return</span> customerRepository.save(customer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"&#123;key&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Customer <span class="title">get</span><span class="params">(@PathVariable(<span class="string">"key"</span>)</span> Long key) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> customerRepository.findById(key).orElse(<span class="keyword">new</span> Customer());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>@RestController</code>는 RestApi로 사용하기 위해 선언한다.<br><code>CustomerRepository</code>의 Save 및 findById를 사용한다.</p>
+<ul>
+<li>save와 findById는 자동으로 생성된다.<br><code>Customer.newCustomer(key, name)</code> 입력된 값으로 저장을 위한 신규 객체를 생성한다.<br><code>orElse(new Customer())</code> 값이 존재하지 않을 경우 빈 객체를 리턴한다.</li>
+</ul>
+</blockquote>
+<h3 id="Customer-테스트"><a href="#Customer-테스트" class="headerlink" title="Customer 테스트"></a>Customer 테스트</h3><ul>
+<li>저장테스트</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; curl -X POST <span class="string">"http://localhost:8080/customer/1"</span> -H <span class="string">"accept: */*"</span> -H <span class="string">"Content-Type: application/json"</span> -d <span class="string">"테스트"</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"id"</span>: 1,</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"테스트"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>저장한 값을 리턴한다.</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; curl -X GET <span class="string">"http://localhost:8080/customer/1"</span> -H <span class="string">"accept: */*"</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"id"</span>: 1,</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"테스트"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Region 정보 확인</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">gfsh&gt;describe region --name=customer</span><br><span class="line">Name            : customer</span><br><span class="line">Data Policy     : replicate</span><br><span class="line">Hosting Members : server1</span><br><span class="line"></span><br><span class="line">Non-Default Attributes Shared By Hosting Members</span><br><span class="line"></span><br><span class="line"> Type  |    Name     | Value</span><br><span class="line">------ | ----------- | ---------------</span><br><span class="line">Region | data-policy | REPLICATE</span><br><span class="line">       | size        | 1</span><br><span class="line">       | scope       | distributed-ack</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="TestCache-저장-및-로드"><a href="#TestCache-저장-및-로드" class="headerlink" title="TestCache 저장 및 로드"></a>TestCache 저장 및 로드</h3><p>TestCache는 <code>org.springframework.cache</code>를 이용해 최소한의 설정값 만으로 Gemfire를 사용하기 위한 예제이다.</p>
+<p><code>TestCache.java</code></p>
+<p>TestCache는 일반적인 java entity 파일이다. 별도의 gemfire를 위한 설정은 존재하지 않는다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@EqualsAndHashCode</span></span><br><span class="line"><span class="meta">@ToString</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestCache</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String addr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>TestCacheService.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestCacheService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@CachePut</span>(cacheNames = <span class="string">"testCache"</span>, key = <span class="string">"#key"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> TestCache <span class="title">put</span><span class="params">(String key, TestCache testCache)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> testCache;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Cacheable</span>(cacheNames = <span class="string">"testCache"</span>, key = <span class="string">"#key"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> TestCache <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>@CachePut</code>, <code>@Cacheable</code> 등 Spring Cache 를 이용해 Gemfire 의 Region에 데이터를 저장 및 로드 가능하다.<br>반드시 <code>@Service</code> 레벨이어야 한다. 또한, proxy 패턴을 이용하는 것이므로 같은 Class 내부에서 호출하는 부분은 캐싱되지않는다.<br><code>cacheNames = &quot;testCache&quot;</code> 으로 <code>region</code>의 이름을 명시한다.<br><code>key = &quot;#key&quot;</code>와 같이 매개변수명을 조합해 key를 지정할 수 있다.</p>
+</blockquote>
+<p><code>TestCacheController.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"cache"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestCacheController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> TestCacheService testCacheService;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestCacheController</span><span class="params">(TestCacheService testCacheService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.testCacheService = testCacheService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"&#123;key&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> TestCache <span class="title">put</span><span class="params">(@PathVariable(<span class="string">"key"</span>)</span> String key, @RequestBody TestCache value) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> testCacheService.put(key, value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"&#123;key&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> TestCache <span class="title">get</span><span class="params">(@PathVariable(<span class="string">"key"</span>)</span> String key) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> testCacheService.get(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>TestCacheService</code>를 이용해 데이터를 저장 및 로드 한다.</p>
+</blockquote>
+<h3 id="TestCache-테스트"><a href="#TestCache-테스트" class="headerlink" title="TestCache 테스트"></a>TestCache 테스트</h3><ul>
+<li>저장</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; curl -X POST <span class="string">"http://localhost:8080/cache/1"</span> -H <span class="string">"accept: */*"</span> -H <span class="string">"Content-Type: application/json"</span> -d <span class="string">"&#123; \"addr\": \"테스트주소\", \"name\": \"테스트이름\"&#125;"</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"테스트이름"</span>,</span><br><span class="line">  <span class="string">"addr"</span>: <span class="string">"테스트주소"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>로드</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET <span class="string">"http://localhost:8080/cache/1"</span> -H <span class="string">"accept: */*"</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"테스트이름"</span>,</span><br><span class="line">  <span class="string">"addr"</span>: <span class="string">"테스트주소"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Region 정보 확인</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">gfsh&gt;describe region --name=testCache</span><br><span class="line">Name            : testCache</span><br><span class="line">Data Policy     : replicate</span><br><span class="line">Hosting Members : server1</span><br><span class="line"></span><br><span class="line">Non-Default Attributes Shared By Hosting Members</span><br><span class="line"></span><br><span class="line"> Type  |    Name     | Value</span><br><span class="line">------ | ----------- | ---------------</span><br><span class="line">Region | data-policy | REPLICATE</span><br><span class="line">       | size        | 1</span><br><span class="line">       | scope       | distributed-ack</span><br></pre></td></tr></table></figure>
+
+<p>저장된 것을 확인할 수 있다.</p>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><ul>
+<li><p><a href="https://gemfire.docs.pivotal.io/99/gemfire/tools_modules/gfsh/chapter_overview.html" target="_blank" rel="noopener">gfsh(gemfire.docs.pivotal.io)</a></p>
+</li>
+<li><p><a href="https://gemfire.docs.pivotal.io/99/geode/developing/region_options/region_types.html" target="_blank" rel="noopener">Region Types(gemfire.docs.pivotal.io)</a></p>
+</li>
+</ul>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Java/">Java</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Java-Spring-Spring-Boot-Gemfire/">Java, Spring, Spring Boot, Gemfire</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2019 Park-JiHoon
+    
+  </p>
+</footer>
+    
+  </div>
+</div>
+</body>
+</html>
