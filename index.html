@@ -65,6 +65,184 @@
 
   
     
+    <h3 class="article-title"><a href="/2020/01/03/Spring-boot의-ComponentScan-과-application-yml/"><span>Spring boot의 ComponentScan 과 application.yml</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2020/01/03/Spring-boot의-ComponentScan-과-application-yml/" rel="bookmark">
+        <time class="entry-date published" datetime="2020-01-03T14:21:14.000Z">
+          2020-01-03
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="Spring-Boot로-제작한-Application을-다른-Application에서-가져다-사용해보자"><a href="#Spring-Boot로-제작한-Application을-다른-Application에서-가져다-사용해보자" class="headerlink" title="Spring Boot로 제작한 Application을 다른 Application에서 가져다 사용해보자."></a>Spring Boot로 제작한 Application을 다른 Application에서 가져다 사용해보자.</h2><p>Spring Boot를 기반으로 제작한 Application을 다른 Application에서 가져다 사용하는 방법에 대해 알아보고, 문제가 될 수 있는 부분을 찾아본다.</p>
+<h2 id="1-개요"><a href="#1-개요" class="headerlink" title="1. 개요"></a>1. 개요</h2><ul>
+<li>Spring boot 를 기반으로 한 Demo1 제작</li>
+<li>Demo1에서 application.yml에 값(value)을 입력</li>
+<li>Demo1을 실행하여 application.yml의 값의 출력을 확인.</li>
+<li>Demo1 packaging</li>
+<li>Demo1의 jar 내부에 application.yml이 존재함을 확인.</li>
+<li>Demo1에 대한 의존성을 가지고있는 Demo2를 작성</li>
+<li>Demo2에서 Demo1의 application.yml 값을 가져와지는지 확인.</li>
+</ul>
+<h2 id="2-Demo1"><a href="#2-Demo1" class="headerlink" title="2. Demo1"></a>2. Demo1</h2><p>Spring Boot 를 기반으로 한 Demo1을 제작합니다.</p>
+<h3 id="2-1-폴더구성"><a href="#2-1-폴더구성" class="headerlink" title="2.1. 폴더구성"></a>2.1. 폴더구성</h3><ul>
+<li>실행을 위한 <code>Demo1Application.java</code>가 존재</li>
+<li>application.yml의 값을 가져오기 위한 <code>Demo1Tester.java</code>가 위치</li>
+</ul>
+<img src="/2020/01/03/Spring-boot%EC%9D%98-ComponentScan-%EA%B3%BC-application-yml/directory.png" class="">
+
+
+<h3 id="2-2-pom-xml"><a href="#2-2-pom-xml" class="headerlink" title="2.2. pom.xml"></a>2.2. pom.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.2.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>demo1<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>demo1<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Demo project for Spring Boot<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">java.version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.junit.vintage<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit-vintage-engine<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>lombok 이외에는 특별한거 하나 없는 intellij 기본 생성 Spring Boot Application이다.</p>
+</blockquote>
+<h3 id="2-3-application-yml"><a href="#2-3-application-yml" class="headerlink" title="2.3. application.yml"></a>2.3. application.yml</h3><p><code>test.example.value</code> 의 값으로 <code>demo1</code>을 세팅한다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">example:</span></span><br><span class="line">    <span class="attr">value:</span> <span class="string">demo1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-Demo1Tester-java"><a href="#2-4-Demo1Tester-java" class="headerlink" title="2.4. Demo1Tester.java"></a>2.4. Demo1Tester.java</h3><blockquote>
+<p>application.yml의 값을 가져오기 위한 Class<br>Autowired 테스트를 위해 <code>@Component</code>로 선언한다.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Value;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo1Tester</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;test.example.value&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> String value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-5-Demo1Application-java"><a href="#2-5-Demo1Application-java" class="headerlink" title="2.5. Demo1Application.java"></a>2.5. Demo1Application.java</h3><blockquote>
+<p><code>Demo1Tester</code>를 autowired 한 뒤 value 의 값을 가져와 log로 출력한다.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.example.demo1.logic.Demo1Tester;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.CommandLineRunner;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo1Application</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Demo1Tester tester;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Demo1Application</span><span class="params">(Demo1Tester tester)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.tester = tester;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(Demo1Application<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        log.info(<span class="string">"demo1 : tester.getValue() : &#123;&#125;"</span>, tester.getValue());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-6-Demo1-실행결과"><a href="#2-6-Demo1-실행결과" class="headerlink" title="2.6. Demo1 실행결과"></a>2.6. Demo1 실행결과</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">  .   ____          _            __ _ _</span><br><span class="line"> /\\ / ___<span class="string">'_ __ _ _(_)_ __  __ _ \ \ \ \</span></span><br><span class="line"><span class="string">( ( )\___ | '</span>_ | <span class="string">'_| | '</span>_ \/ _` | \ \ \ \</span><br><span class="line"> \\/  ___)| |_)| | | | | || (_| |  ) ) ) )</span><br><span class="line">  <span class="string">'  |____| .__|_| |_|_| |_\__, | / / / /</span></span><br><span class="line"><span class="string"> =========|_|==============|___/=/_/_/_/</span></span><br><span class="line"><span class="string"> :: Spring Boot ::        (v2.2.2.RELEASE)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">2020-01-03 22:53:54.010  INFO 20040 --- [           main] com.example.demo1.Demo1Application       : Starting Demo1Application on park-PC with PID 20040 (started by park in D:\Dropbox\프리랜서\2020\demo1)</span></span><br><span class="line"><span class="string">2020-01-03 22:53:54.014  INFO 20040 --- [           main] com.example.demo1.Demo1Application       : No active profile set, falling back to default profiles: default</span></span><br><span class="line"><span class="string">2020-01-03 22:53:54.752  INFO 20040 --- [           main] com.example.demo1.Demo1Application       : Started Demo1Application in 1.351 seconds (JVM running for 5.656)</span></span><br><span class="line"><span class="string">2020-01-03 22:53:54.754  INFO 20040 --- [           main] com.example.demo1.Demo1Application       : tester.getValue() : demo1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>demo1</code>이 출력되는 것을 확인할 수 있다.</p>
+</blockquote>
+<h3 id="2-7-Demo1-packaging"><a href="#2-7-Demo1-packaging" class="headerlink" title="2.7. Demo1 packaging"></a>2.7. Demo1 packaging</h3><p>Spring Boot의 repackage를 스킵하도록 한다.</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">&gt; mvn clean install -DskipTests -Dspring-boot.repackage.skip=<span class="literal">true</span></span><br><span class="line">[INFO] Scanning <span class="keyword">for</span> projects...</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] -------------------------&lt; com.example:demo1 &gt;--------------------------</span><br><span class="line">[INFO] Building demo1 0.0.1-SNAPSHOT</span><br><span class="line">[INFO] --------------------------------[ jar ]---------------------------------</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ demo1 ---</span><br><span class="line">[INFO] Deleting D:\Dropbox\프리랜서\2020\demo1\target</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ demo1 ---</span><br><span class="line">[INFO] Using <span class="string">'UTF-8'</span> encoding to copy filtered resources.</span><br><span class="line">[INFO] Copying 1 resource</span><br><span class="line">[INFO] Copying 0 resource</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ demo1 ---</span><br><span class="line">[INFO] Changes detected - recompiling the module!</span><br><span class="line">[INFO] Compiling 2 <span class="built_in">source</span> files to D:\Dropbox\프리랜서\2020\demo1\target\classes</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ demo1 ---</span><br><span class="line">[INFO] Using <span class="string">'UTF-8'</span> encoding to copy filtered resources.</span><br><span class="line">[INFO] skip non existing resourceDirectory D:\Dropbox\프리랜서\2020\demo1\src\<span class="built_in">test</span>\resources</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ demo1 ---</span><br><span class="line">[INFO] Changes detected - recompiling the module!</span><br><span class="line">[INFO] Compiling 1 <span class="built_in">source</span> file to D:\Dropbox\프리랜서\2020\demo1\target\<span class="built_in">test</span>-classes</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-surefire-plugin:2.22.2:<span class="built_in">test</span> (default-test) @ demo1 ---</span><br><span class="line">[INFO] Tests are skipped.</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-jar-plugin:3.1.2:jar (default-jar) @ demo1 ---</span><br><span class="line">[INFO] Building jar: D:\Dropbox\프리랜서\2020\demo1\target\demo1-0.0.1-SNAPSHOT.jar</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- spring-boot-maven-plugin:2.2.2.RELEASE:repackage (repackage) @ demo1 ---</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ demo1 ---</span><br><span class="line">[INFO] Installing D:\Dropbox\프리랜서\2020\demo1\target\demo1-0.0.1-SNAPSHOT.jar to C:\Users\park\.m2\repository\com\example\demo1\0.0.1-SNAPSHOT\demo1-0.0.1-SNAPS</span><br><span class="line">HOT.jar</span><br><span class="line">[INFO] Installing D:\Dropbox\프리랜서\2020\demo1\pom.xml to C:\Users\park\.m2\repository\com\example\demo1\0.0.1-SNAPSHOT\demo1-0.0.1-SNAPSHOT.pom</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] BUILD SUCCESS</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Total time:  24.001 s</span><br><span class="line">[INFO] Finished at: 2020-01-03T22:55:24+09:00</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-8-Demo1-jar"><a href="#2-8-Demo1-jar" class="headerlink" title="2.8. Demo1.jar"></a>2.8. Demo1.jar</h3><img src="/2020/01/03/Spring-boot%EC%9D%98-ComponentScan-%EA%B3%BC-application-yml/directory3.png" class="">
+
+
+<blockquote>
+<p>application.yml 이 포함되었음을 확인할 수 있다.</p>
+</blockquote>
+<h2 id="3-Demo2"><a href="#3-Demo2" class="headerlink" title="3. Demo2"></a>3. Demo2</h2><p>Demo1에 의존성을 가지고 있는 Demo2를 생성한다.</p>
+<h3 id="3-1-폴더구성"><a href="#3-1-폴더구성" class="headerlink" title="3.1. 폴더구성"></a>3.1. 폴더구성</h3><ul>
+<li>실행을 위한 <code>Demo2Application.java</code>가 존재</li>
+<li>여러가지 케이스 테스트를 위한 application.yml 존재</li>
+</ul>
+<img src="/2020/01/03/Spring-boot%EC%9D%98-ComponentScan-%EA%B3%BC-application-yml/directory2.png" class="">
+
+
+<h3 id="3-2-pom-xml"><a href="#3-2-pom-xml" class="headerlink" title="3.2. pom.xml"></a>3.2. pom.xml</h3><blockquote>
+<p>demo1 의 라이브러리를 dependency에 추가한다.</p>
+</blockquote>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.2.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>demo2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>demo2<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Demo project for Spring Boot<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">java.version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>demo1<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.junit.vintage<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit-vintage-engine<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-Demo2Application-java"><a href="#3-3-Demo2Application-java" class="headerlink" title="3.3. Demo2Application.java"></a>3.3. Demo2Application.java</h3><blockquote>
+<p><code>@ComponentScan</code> 으로 demo1의 @Component를 탐색한다.<br><code>Demo1Tester</code> Class를 Autowired 한다.<br>value 값을 출력한다.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.example.demo1.logic.Demo1Tester;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.CommandLineRunner;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.ComponentScan;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(basePackages = &#123;<span class="string">"com.example.demo1"</span>, <span class="string">"com.example.demo2"</span>&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo2Application</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Demo1Tester tester;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Demo2Application</span><span class="params">(Demo1Tester tester)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.tester = tester;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(Demo2Application<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        log.info(<span class="string">"demo2 : tester.getValue() : &#123;&#125;"</span>, tester.getValue());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-결과"><a href="#4-결과" class="headerlink" title="4. 결과"></a>4. 결과</h2><h3 id="4-1-시나리오1"><a href="#4-1-시나리오1" class="headerlink" title="4.1. 시나리오1"></a>4.1. 시나리오1</h3><p>기본실행</p>
+<ul>
+<li>Demo2 application.yml 삭제 (null)</li>
+<li>Demo2Application 실행</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2020-01-04 00:10:06.508  INFO 2968 --- [           main] com.example.demo2.Demo2Application       : Starting Demo2Application on park-PC with PID 2968 (started by park <span class="keyword">in</span> D:\Dropbox\프리랜서\2020\demo2)</span><br><span class="line">2020-01-04 00:10:06.514  INFO 2968 --- [           main] com.example.demo2.Demo2Application       : No active profile <span class="built_in">set</span>, falling back to default profiles: default</span><br><span class="line">2020-01-04 00:10:07.687  INFO 2968 --- [           main] com.example.demo2.Demo2Application       : Started Demo2Application <span class="keyword">in</span> 1.853 seconds (JVM running <span class="keyword">for</span> 3.188)</span><br><span class="line">2020-01-04 00:10:07.693  INFO 2968 --- [           main] com.example.demo2.Demo2Application       : demo2 : tester.getValue() : demo1</span><br><span class="line">2020-01-04 00:10:07.695  INFO 2968 --- [           main] com.example.demo1.Demo1Application       : demo1 : tester.getValue() : demo1</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>demo1과 demo2의 값이 <strong>demo1</strong>로 출력되는 것을 확인.<br><code>demo1 : tester.getValue</code> 은 demo2에 포함되는 코드가 아님에도 출력됐음을 확인.</p>
+</blockquote>
+<h3 id="4-2-시나리오2"><a href="#4-2-시나리오2" class="headerlink" title="4.2. 시나리오2"></a>4.2. 시나리오2</h3><ul>
+<li>Demo2에 application.yml 추가 (empty)</li>
+<li>Demo2Application 실행</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">2020-01-04 00:16:29.628  INFO 14512 --- [           main] com.example.demo2.Demo2Application       : Starting Demo2Application on park-PC with PID 14512 (started by park <span class="keyword">in</span> D:\Dropbox\프리랜서\2020\demo2)</span><br><span class="line">2020-01-04 00:16:29.636  INFO 14512 --- [           main] com.example.demo2.Demo2Application       : No active profile <span class="built_in">set</span>, falling back to default profiles: default</span><br><span class="line">2020-01-04 00:16:30.569  WARN 14512 --- [           main] s.c.a.AnnotationConfigApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name <span class="string">'demo2Application'</span>: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name <span class="string">'demo1Tester'</span>: Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder <span class="string">'test.example.value'</span> <span class="keyword">in</span> value <span class="string">"<span class="variable">$&#123;test.example.value&#125;</span>"</span></span><br><span class="line">2020-01-04 00:16:30.583  INFO 14512 --- [           main] ConditionEvaluationReportLoggingListener : </span><br><span class="line"></span><br><span class="line">Error starting ApplicationContext. To display the conditions report re-run your application with <span class="string">'debug'</span> enabled.</span><br><span class="line">2020-01-04 00:16:30.623 ERROR 14512 --- [           main] o.s.boot.SpringApplication               : Application run failed</span><br><span class="line"></span><br><span class="line">org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name <span class="string">'demo2Application'</span>: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name <span class="string">'demo1Tester'</span>: Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder <span class="string">'test.example.value'</span> <span class="keyword">in</span> value <span class="string">"<span class="variable">$&#123;test.example.value&#125;</span>"</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>test.example.value</code> 값이 존재하지 않아 Spring boot 실행 시 에러 발생</p>
+</blockquote>
+<h3 id="4-3-시나리오3"><a href="#4-3-시나리오3" class="headerlink" title="4.3. 시나리오3"></a>4.3. 시나리오3</h3><ul>
+<li>Demo2에 application.yml에 값 추가</li>
+<li>Demo2Application 실행</li>
+</ul>
+<p>demo2/application.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">example:</span></span><br><span class="line">    <span class="attr">value:</span> <span class="string">demo2</span></span><br></pre></td></tr></table></figure>
+
+<p>결과</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2020-01-04 00:18:22.742  INFO 19544 --- [           main] com.example.demo2.Demo2Application       : Starting Demo2Application on park-PC with PID 19544 (started by park <span class="keyword">in</span> D:\Dropbox\프리랜서\2020\demo2)</span><br><span class="line">2020-01-04 00:18:22.750  INFO 19544 --- [           main] com.example.demo2.Demo2Application       : No active profile <span class="built_in">set</span>, falling back to default profiles: default</span><br><span class="line">2020-01-04 00:18:23.970  INFO 19544 --- [           main] com.example.demo2.Demo2Application       : Started Demo2Application <span class="keyword">in</span> 1.969 seconds (JVM running <span class="keyword">for</span> 3.285)</span><br><span class="line">2020-01-04 00:18:23.973  INFO 19544 --- [           main] com.example.demo2.Demo2Application       : demo2 : tester.getValue() : demo2</span><br><span class="line">2020-01-04 00:18:23.974  INFO 19544 --- [           main] com.example.demo1.Demo1Application       : demo1 : tester.getValue() : demo2</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>demo1과 demo2의 값이 <strong>demo2</strong>로 출력되는 것을 확인.<br><code>demo1 : tester.getValue</code> 은 demo2에 포함되는 코드가 아님에도 출력됐음을 확인.</p>
+</blockquote>
+<h3 id="4-4-결론"><a href="#4-4-결론" class="headerlink" title="4.4. 결론"></a>4.4. 결론</h3><ul>
+<li>jar 내부 <em>application.yml</em> 은 <code>@ComponentScan</code> 시 값이 읽힐 수 있다.<ul>
+<li>다만 jar를 import 하는 application의 <em>application.yml</em>이 아예 <strong>존재하지 않아야 한다</strong>.</li>
+</ul>
+</li>
+<li>실행되는 application에 <em>application.yml</em> 설정파일이 존재한다면 jar내부의 <em>application.yml</em>은 <strong>무시</strong>된다.<ul>
+<li>실행되는 application의 <em>application.yml</em> 내부 값이 적용된다.</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-추가"><a href="#5-추가" class="headerlink" title="5. 추가"></a>5. 추가</h2><ul>
+<li>@ComponentScan 시 basePackages 설정에 대한 고민</li>
+</ul>
+<p>위의 테스트에서 자꾸 demo2에 포함되지 않는 demo1의 코드가 실행되는 것을 알 수 있다. 이는 @ComponentScan의 basePackages에 com.example.demo1 로 설정되어있기 때문이다. (원하지 않는 Demo1Application이 실행될 수 있다는 이야기다.)<br>따라서 다른 Application의 Component를 사용할 경우에는 최소한의 범위로 선언해서 사용할 수 있도록 해야한다.</p>
+<p><code>@ComponentScan(basePackages = {&quot;com.example.demo2&quot;, &quot;com.example.demo1.logic&quot;})</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2020-01-04 00:23:49.949  INFO 10644 --- [           main] com.example.demo2.Demo2Application       : Starting Demo2Application on park-PC with PID 10644 (started by park <span class="keyword">in</span> D:\Dropbox\프리랜서\2020\demo2)</span><br><span class="line">2020-01-04 00:23:49.954  INFO 10644 --- [           main] com.example.demo2.Demo2Application       : No active profile <span class="built_in">set</span>, falling back to default profiles: default</span><br><span class="line">2020-01-04 00:23:51.010  INFO 10644 --- [           main] com.example.demo2.Demo2Application       : Started Demo2Application <span class="keyword">in</span> 1.862 seconds (JVM running <span class="keyword">for</span> 3.134)</span><br><span class="line">2020-01-04 00:23:51.012  INFO 10644 --- [           main] com.example.demo2.Demo2Application       : demo2 : tester.getValue() : demo2</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>com.example.demo1.logic</code> 으로 선언했을 경우 <code>Demo1Application</code> 이 실행되지 않는것을 확인할 수 있다.</p>
+</blockquote>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Java/">Java</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Java-Spring-Spring-Boot/">Java, Spring, Spring Boot</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2019/12/16/Spring-Boot와-함께하는-Pivotal-Gemfire-간단예제-2/"><span>Spring Boot와 함께하는 Pivotal Gemfire 간단예제(2)</span></a></h3>
     
   
@@ -1052,120 +1230,6 @@
 
 
 
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2018/08/19/Burp-suite-간단사용법/"><span>Burp suite 간단사용법</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2018/08/19/Burp-suite-간단사용법/" rel="bookmark">
-        <time class="entry-date published" datetime="2018-08-19T06:03:14.000Z">
-          2018-08-19
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="프록시-서버-설정"><a href="#프록시-서버-설정" class="headerlink" title="프록시 서버 설정"></a>프록시 서버 설정</h2><h3 id="프록시서버"><a href="#프록시서버" class="headerlink" title="프록시서버"></a>프록시서버</h3><p>서버와 클라이언트 사이에서 중계기 역할을 수행하며 대리로 통신하는 기능을 <code>프록시(Proxy)</code> 라고 합니다. 프록시 서버란 해당 중계기능을 지원하고 있는 서버(컴퓨터) 혹은 응용프로그램 을 말합니다.</p>
-<p>Burp Suite 사용을 위해서는 우선 프록시 서버를 설정할 필요가 있습니다.</p>
-<p>이번 포스팅에서는 Windows 10 / Chrome 환경에서 프록시 서버를 생성해보겠습니다.</p>
-<ul>
-<li><p>Chrome의 설정 화면을 열어줍니다.</p>
-<ul>
-<li><a href="chrome://settings/" target="_blank" rel="noopener">chrome://settings/</a></li>
-</ul>
-</li>
-<li><p>고급 설정 하단의 <code>프록시 설정 열기</code> 를 클릭해줍니다.</p>
-</li>
-</ul>
-
-
-<ul>
-<li>인터넷 속성에서 LAN 설정을 클릭합니다.</li>
-</ul>
-
-
-<ul>
-<li>프록시 서버 란에 체크한 뒤 로컬 서버 ip 인 <code>127.0.0.1</code> 을 넣어주고, Burp Suite 의 기본 포트인 <code>8080</code> 을 설정해줍니다.</li>
-</ul>
-
-
-<ul>
-<li>프록시 서버 설정이 완료되었습니다.</li>
-</ul>
-<h2 id="Burp-Suite-Proxy-확인"><a href="#Burp-Suite-Proxy-확인" class="headerlink" title="Burp Suite Proxy 확인"></a>Burp Suite Proxy 확인</h2><p><em>Burp Suite 프로그램의 설치는 이전 <a href="/2018/08/18/Burp-suite-%EC%84%A4%EC%B9%98/" title="포스트">포스트</a>를 참고해주세요.</em></p>
-<ul>
-<li>프록시 서버 설정을 완료한 뒤 Burp Suite 프로그램을 실행합니다.</li>
-</ul>
-
-
-<ul>
-<li>proxy 탭에서 <code>Intercept is off</code> 를 클릭하여 <code>Intercept is on</code> 으로 변경합니다.</li>
-</ul>
-
-
-<ul>
-<li>on 인 동안에는 Chrome 을 통한 브라우징이 모두 Burp Suite 를 통해야만 진행될 수 있게됩니다.</li>
-</ul>
-
-
-<ul>
-<li>필요에 따라 On / Off 하면서 사용하면 됩니다.</li>
-</ul>
-<p><em><code>주의 : Chrome 자체적으로 위험한 Proxy 를 감시하는 기능이 존재합니다. 외부 인터넷 연경 (Google 검색 등)에 제한이 있을 수 있습니다.</code></em></p>
-<h2 id="주요-옵션"><a href="#주요-옵션" class="headerlink" title="주요 옵션"></a>주요 옵션</h2><h3 id="proxy"><a href="#proxy" class="headerlink" title="proxy"></a>proxy</h3><p>패킷을 의도한 대상에 도달 하지 않게 하거나 특정 호스트에 redirect 하거나, 패킷을 삭제할 수도 있습니다.</p>
-<h3 id="spider"><a href="#spider" class="headerlink" title="spider"></a>spider</h3><p>spider 기능은 새 링크, 콘텐츠 등을 찾는 데 사용 됩니다. 로그인 폼을 찾으면 자동으로 전송하고, response를 통해 새로운 contents를 찾습니다. 이 정보는 scanner 로 보내져서, 찾아낸 모든 link와 content에 대해 scan을 하게 됩니다.</p>
-<h3 id="scanner"><a href="#scanner" class="headerlink" title="scanner"></a>scanner</h3><p>웹 응용 프로그램을 scan하여 취약점을 찾는데 사용 됩니다. 검사의 종류는 passive, active, user-directed가 있습니다. 몇 가지 false positives가 테스트 하는 동안 발생할 수 있습니다. 자동화된 스캐너에는 100% 정확한 결과가 없음을 기억하는 게 중요합니다. 불행하게도 무료 버전으로는 scanner 기능이 제공되지 않습니다.</p>
-<h3 id="intruder"><a href="#intruder" class="headerlink" title="intruder"></a>intruder</h3><p>이 기능은 브루트 포스 공격을 수행하거나 웹 응용 프로그램을 fuzzing하거나, 취약점을 exploite하는 것과 같은 다양한 목적을 위해 사용할 수 있습니다.</p>
-<h3 id="repeater"><a href="#repeater" class="headerlink" title="repeater"></a>repeater</h3><p>이 기능은 같은 요청을 많은 횟수로 수정해서 보내서, 응답을 분석할 때 사용 됩니다.</p>
-<h3 id="sequencer"><a href="#sequencer" class="headerlink" title="sequencer"></a>sequencer</h3><p>이 기능은 주로 웹 응용 프로그램에서 제공 하는 세션 토큰의 임의성을 확인 할 때 사용 됩니다. 이것을 알아내기 위해 다양한 고급 테스트를 수행 합니다.</p>
-<h3 id="decoder"><a href="#decoder" class="headerlink" title="decoder"></a>decoder</h3><p>이 기능을 사용하여 암호화된 데이터를 다시 원래 형태로 해독하거나, 데이터를 암호화 하기 위하여 사용할 수 있습니다.</p>
-<h3 id="comparer"><a href="#comparer" class="headerlink" title="comparer"></a>comparer</h3><p>이 기능은 두 개의 요청, 응답 또는 다른 형태의 데이터 비교를 수행하는 데 사용됩니다. 이 기능은 다른 입력에 대한 응답을 비교 하는 경우에 유용할 수 있습니다.</p>
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-      
-
-    <span class="post-categories">
-      <i class="icon-categories"></i>
-        <a href="/categories/Tool/">Tool</a>
-    </span>
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/Burp/">Burp</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
 
 <nav class="pagination">
   
@@ -1181,7 +1245,7 @@
     Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
     </br>
     
-    &copy; 2019 Park-JiHoon
+    &copy; 2020 Park-JiHoon
     
   </p>
 </footer>

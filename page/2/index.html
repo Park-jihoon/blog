@@ -65,6 +65,120 @@
 
   
     
+    <h3 class="article-title"><a href="/2018/08/19/Burp-suite-간단사용법/"><span>Burp suite 간단사용법</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2018/08/19/Burp-suite-간단사용법/" rel="bookmark">
+        <time class="entry-date published" datetime="2018-08-19T06:03:14.000Z">
+          2018-08-19
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="프록시-서버-설정"><a href="#프록시-서버-설정" class="headerlink" title="프록시 서버 설정"></a>프록시 서버 설정</h2><h3 id="프록시서버"><a href="#프록시서버" class="headerlink" title="프록시서버"></a>프록시서버</h3><p>서버와 클라이언트 사이에서 중계기 역할을 수행하며 대리로 통신하는 기능을 <code>프록시(Proxy)</code> 라고 합니다. 프록시 서버란 해당 중계기능을 지원하고 있는 서버(컴퓨터) 혹은 응용프로그램 을 말합니다.</p>
+<p>Burp Suite 사용을 위해서는 우선 프록시 서버를 설정할 필요가 있습니다.</p>
+<p>이번 포스팅에서는 Windows 10 / Chrome 환경에서 프록시 서버를 생성해보겠습니다.</p>
+<ul>
+<li><p>Chrome의 설정 화면을 열어줍니다.</p>
+<ul>
+<li><a href="chrome://settings/" target="_blank" rel="noopener">chrome://settings/</a></li>
+</ul>
+</li>
+<li><p>고급 설정 하단의 <code>프록시 설정 열기</code> 를 클릭해줍니다.</p>
+</li>
+</ul>
+
+
+<ul>
+<li>인터넷 속성에서 LAN 설정을 클릭합니다.</li>
+</ul>
+
+
+<ul>
+<li>프록시 서버 란에 체크한 뒤 로컬 서버 ip 인 <code>127.0.0.1</code> 을 넣어주고, Burp Suite 의 기본 포트인 <code>8080</code> 을 설정해줍니다.</li>
+</ul>
+
+
+<ul>
+<li>프록시 서버 설정이 완료되었습니다.</li>
+</ul>
+<h2 id="Burp-Suite-Proxy-확인"><a href="#Burp-Suite-Proxy-확인" class="headerlink" title="Burp Suite Proxy 확인"></a>Burp Suite Proxy 확인</h2><p><em>Burp Suite 프로그램의 설치는 이전 <a href="/2018/08/18/Burp-suite-%EC%84%A4%EC%B9%98/" title="포스트">포스트</a>를 참고해주세요.</em></p>
+<ul>
+<li>프록시 서버 설정을 완료한 뒤 Burp Suite 프로그램을 실행합니다.</li>
+</ul>
+
+
+<ul>
+<li>proxy 탭에서 <code>Intercept is off</code> 를 클릭하여 <code>Intercept is on</code> 으로 변경합니다.</li>
+</ul>
+
+
+<ul>
+<li>on 인 동안에는 Chrome 을 통한 브라우징이 모두 Burp Suite 를 통해야만 진행될 수 있게됩니다.</li>
+</ul>
+
+
+<ul>
+<li>필요에 따라 On / Off 하면서 사용하면 됩니다.</li>
+</ul>
+<p><em><code>주의 : Chrome 자체적으로 위험한 Proxy 를 감시하는 기능이 존재합니다. 외부 인터넷 연경 (Google 검색 등)에 제한이 있을 수 있습니다.</code></em></p>
+<h2 id="주요-옵션"><a href="#주요-옵션" class="headerlink" title="주요 옵션"></a>주요 옵션</h2><h3 id="proxy"><a href="#proxy" class="headerlink" title="proxy"></a>proxy</h3><p>패킷을 의도한 대상에 도달 하지 않게 하거나 특정 호스트에 redirect 하거나, 패킷을 삭제할 수도 있습니다.</p>
+<h3 id="spider"><a href="#spider" class="headerlink" title="spider"></a>spider</h3><p>spider 기능은 새 링크, 콘텐츠 등을 찾는 데 사용 됩니다. 로그인 폼을 찾으면 자동으로 전송하고, response를 통해 새로운 contents를 찾습니다. 이 정보는 scanner 로 보내져서, 찾아낸 모든 link와 content에 대해 scan을 하게 됩니다.</p>
+<h3 id="scanner"><a href="#scanner" class="headerlink" title="scanner"></a>scanner</h3><p>웹 응용 프로그램을 scan하여 취약점을 찾는데 사용 됩니다. 검사의 종류는 passive, active, user-directed가 있습니다. 몇 가지 false positives가 테스트 하는 동안 발생할 수 있습니다. 자동화된 스캐너에는 100% 정확한 결과가 없음을 기억하는 게 중요합니다. 불행하게도 무료 버전으로는 scanner 기능이 제공되지 않습니다.</p>
+<h3 id="intruder"><a href="#intruder" class="headerlink" title="intruder"></a>intruder</h3><p>이 기능은 브루트 포스 공격을 수행하거나 웹 응용 프로그램을 fuzzing하거나, 취약점을 exploite하는 것과 같은 다양한 목적을 위해 사용할 수 있습니다.</p>
+<h3 id="repeater"><a href="#repeater" class="headerlink" title="repeater"></a>repeater</h3><p>이 기능은 같은 요청을 많은 횟수로 수정해서 보내서, 응답을 분석할 때 사용 됩니다.</p>
+<h3 id="sequencer"><a href="#sequencer" class="headerlink" title="sequencer"></a>sequencer</h3><p>이 기능은 주로 웹 응용 프로그램에서 제공 하는 세션 토큰의 임의성을 확인 할 때 사용 됩니다. 이것을 알아내기 위해 다양한 고급 테스트를 수행 합니다.</p>
+<h3 id="decoder"><a href="#decoder" class="headerlink" title="decoder"></a>decoder</h3><p>이 기능을 사용하여 암호화된 데이터를 다시 원래 형태로 해독하거나, 데이터를 암호화 하기 위하여 사용할 수 있습니다.</p>
+<h3 id="comparer"><a href="#comparer" class="headerlink" title="comparer"></a>comparer</h3><p>이 기능은 두 개의 요청, 응답 또는 다른 형태의 데이터 비교를 수행하는 데 사용됩니다. 이 기능은 다른 입력에 대한 응답을 비교 하는 경우에 유용할 수 있습니다.</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Tool/">Tool</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Burp/">Burp</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2018/08/18/Burp-suite-설치/"><span>Burp suite 설치</span></a></h3>
     
   
@@ -486,7 +600,7 @@
     Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
     </br>
     
-    &copy; 2019 Park-JiHoon
+    &copy; 2020 Park-JiHoon
     
   </p>
 </footer>
